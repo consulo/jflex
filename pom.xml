@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+  <groupId>consulo.internal</groupId>
   <artifactId>jflex-parent</artifactId>
   <name>JFlex parent and aggregator POM</name>
   <version>1.7.0-2</version>
@@ -126,12 +126,12 @@
         <version>2.6</version>
       </dependency>
       <dependency>
-        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+        <groupId>consulo.internal</groupId>
         <artifactId>cup</artifactId>
         <version>${cup.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+        <groupId>consulo.internal</groupId>
         <artifactId>cup_runtime</artifactId>
         <version>${cup.version}</version>
       </dependency>
@@ -183,7 +183,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+          <groupId>consulo.internal</groupId>
           <artifactId>cup-maven-plugin</artifactId>
           <version>1.0</version>
         </plugin>

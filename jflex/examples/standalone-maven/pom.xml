@@ -19,7 +19,7 @@ of "hello" by "hello &lt;name&gt; !".</description>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+        <groupId>consulo.internal</groupId>
         <artifactId>jflex-maven-plugin</artifactId>
         <version>1.7.0-2</version>
         <executions>

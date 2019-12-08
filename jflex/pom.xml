@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jflex</artifactId>
   <parent>
-    <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+    <groupId>consulo.internal</groupId>
     <artifactId>jflex-parent</artifactId>
     <version>1.7.0-2</version>
     <relativePath>../pom.xml</relativePath>
@@ -53,7 +53,7 @@
   </developers>
   <dependencies>
     <dependency>
-      <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+      <groupId>consulo.internal</groupId>
       <artifactId>cup_runtime</artifactId>
       <version>${cup.version}</version>
     </dependency>
@@ -97,7 +97,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+        <groupId>consulo.internal</groupId>
         <artifactId>cup-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -151,7 +151,7 @@
               <finalName>${project.artifactId}-${project.version}</finalName>
               <artifactSet>
                 <includes>
-                  <include>org.jetbrains.intellij.deps.jflex:cup_runtime</include>
+                  <include>consulo.internal:cup_runtime</include>
                 </includes>
               </artifactSet>
             </configuration>

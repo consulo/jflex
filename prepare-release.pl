@@ -29,14 +29,14 @@ my $sheet =<<'__STYLESHEET__';
   <xsl:param name="release"/>
 
   <!-- Replace all JFlex versions with the new JFlex release version, -->
-  <!-- except for the bootstrap version in the org.jetbrains.intellij.deps.jflex:jflex POM.    -->
+  <!-- except for the bootstrap version in the consulo.internal:jflex POM.    -->
   <xsl:template
-      match=" /pom:project[(pom:groupId='org.jetbrains.intellij.deps.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'))
+      match=" /pom:project[(pom:groupId='consulo.internal' or (not(pom:groupId) and pom:parent/pom:groupId='consulo.internal'))
                            and not (pom:artifactId='cup-maven-plugin' or pom:artifactId='cup-parent')]/pom:version
-             |/pom:project/pom:parent[pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-parent']/pom:version
+             |/pom:project/pom:parent[pom:groupId='consulo.internal' and pom:artifactId='jflex-parent']/pom:version
              |/pom:project/pom:build/pom:plugins/pom:plugin
-              [   (pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-maven-plugin')
-              and not(/pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex' and /pom:project/pom:artifactId='jflex')
+              [   (pom:groupId='consulo.internal' and pom:artifactId='jflex-maven-plugin')
+              and not(/pom:project/pom:parent/pom:groupId='consulo.internal' and /pom:project/pom:artifactId='jflex')
               and not(/pom:project/pom:artifactId='jflex-unicode-maven-plugin')]/pom:version">
     <version><xsl:value-of select="$release"/></version>
   </xsl:template>

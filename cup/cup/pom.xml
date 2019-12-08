@@ -4,7 +4,7 @@
   <artifactId>cup</artifactId>
   <packaging>jar</packaging>
   <parent>
-    <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+    <groupId>consulo.internal</groupId>
     <artifactId>cup-parent</artifactId>
     <version>11b</version>
     <relativePath>../pom.xml</relativePath>

@@ -7,7 +7,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
+        <groupId>consulo.internal</groupId>
         <artifactId>cup-maven-plugin</artifactId>
         <executions>
           <execution>

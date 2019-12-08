@@ -10,7 +10,7 @@
 #   - switches working copy to git **new_snapshot** branch
 #   - Changes the JFlex version in all POMs to the supplied
 #     snapshot version (X.Y.Z-SNAPSHOT)
-#   - Changes the bootstrap JFlex version in the org.jetbrains.intellij.deps.jflex:jflex
+#   - Changes the bootstrap JFlex version in the consulo.internal:jflex
 #     POM to the latest release version.
 #   - Updates the JFlex version comments and @version tags
 #   - Commits the changes to master
@@ -40,23 +40,23 @@ my $sheet =<<'__STYLESHEET__';
   <xsl:param name="latest-release"/>
 
   <!-- Replace all JFlex versions with the new JFlex snapshot version, --> 
-  <!-- except for the bootstrap version in the org.jetbrains.intellij.deps.jflex:jflex POM.     -->
+  <!-- except for the bootstrap version in the consulo.internal:jflex POM.     -->
   <xsl:template 
-      match=" /pom:project[(pom:groupId='org.jetbrains.intellij.deps.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'))
+      match=" /pom:project[(pom:groupId='consulo.internal' or (not(pom:groupId) and pom:parent/pom:groupId='consulo.internal'))
                            and not (pom:artifactId='cup-maven-plugin' or pom:artifactId='cup-parent')]/pom:version
-             |/pom:project/pom:parent[pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-parent']/pom:version
+             |/pom:project/pom:parent[pom:groupId='consulo.internal' and pom:artifactId='jflex-parent']/pom:version
              |/pom:project/pom:build/pom:plugins/pom:plugin
-              [   (pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-maven-plugin')
-              and not(/pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex' and /pom:project/pom:artifactId='jflex')
+              [   (pom:groupId='consulo.internal' and pom:artifactId='jflex-maven-plugin')
+              and not(/pom:project/pom:parent/pom:groupId='consulo.internal' and /pom:project/pom:artifactId='jflex')
               and not(/pom:project/pom:artifactId='jflex-unicode-maven-plugin')]/pom:version">
     <version><xsl:value-of select="$snapshot"/></version>
   </xsl:template>
 
   <!-- Replace the bootstrap version with the latest release version -->
-  <!-- in the org.jetbrains.intellij.deps.jflex:jflex POM.                                    -->
+  <!-- in the consulo.internal:jflex POM.                                    -->
   <xsl:template 
       match="/pom:project/pom:build/pom:plugins/pom:plugin
-             [   /pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'
+             [   /pom:project/pom:parent/pom:groupId='consulo.internal'
              and /pom:project/pom:artifactId='jflex'
              and pom:artifactId='jflex-maven-plugin']
              /pom:version">
@@ -95,7 +95,7 @@ my $previous_snapshot = get_latest_version();
 (my $latest_release = $previous_snapshot) =~ s/-SNAPSHOT//;
 
 print "Switching JFlex version -> $snapshot\n";
-print " and boostrap JFlex version -> $previous_snapshot in the org.jetbrains.intellij.deps.jflex:jflex POM ...\n";
+print " and boostrap JFlex version -> $previous_snapshot in the consulo.internal:jflex POM ...\n";
 File::Find::find({wanted => \&wanted, follow => 1}, '.');
 
 print "Updating version in build.xml\n";
