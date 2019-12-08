@@ -1367,7 +1367,9 @@ public final class Emitter {
 
     skel.emitNext();
 
-    emitConstructorDecl();
+    if(!Options.no_constructor) {
+        emitConstructorDecl();
+    }
 
     emitCharMapInitFunction();
 

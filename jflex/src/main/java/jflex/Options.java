@@ -50,6 +50,9 @@ public class Options {
   /** The encoding to use for input and output files. */
   public static Charset encoding;
 
+  // disable default contructor
+  public static boolean no_constructor;
+
   static {
     setDefaults();
   }
