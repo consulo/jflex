@@ -41,7 +41,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>de.jflex</groupId>
+        <groupId>org.jetbrains.intellij.deps.jflex</groupId>
         <artifactId>jflex-maven-plugin</artifactId>
         <version>1.9.1</version>
         <executions>
