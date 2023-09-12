@@ -32,7 +32,7 @@ import jflex.logging.Out;
  *
  * @see jflex.generator.Emitter
  * @author Gerwin Klein
- * @version JFlex 1.9.1
+ * @version JFlex 1.9.2
  */
 public class Skeleton {
 

@@ -29,7 +29,7 @@ import java.util.*;
  * <p>Table compression, String packing etc. is also done here.
  *
  * @author Gerwin Klein
- * @version JFlex 1.9.1
+ * @version JFlex 1.9.2
  */
 public final class Emitter {
   // bit masks for state attributes
