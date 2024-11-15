@@ -187,12 +187,12 @@ public final class Emitter {
 
     println(" {");
 
-    skel.emitNext();
+    skel.emitNext(); // 7
 
     if (scanner.scanErrorException() == null) println("    throw new Error(message);");
     else println("    throw new " + scanner.scanErrorException() + "(message);");
 
-    skel.emitNext();
+    skel.emitNext(); // 8
 
     print("  " + visibility + " void yypushback(int number) ");
 
@@ -805,13 +805,13 @@ public final class Emitter {
 
     println("\n  {");
 
-    skel.emitNext();
+    skel.emitNext(); // 11
 
     println("    int [] zzTransL = ZZ_TRANS;");
     println("    int [] zzRowMapL = ZZ_ROWMAP;");
     println("    int [] zzAttrL = ZZ_ATTRIBUTE;");
 
-    skel.emitNext();
+    skel.emitNext(); // 12
 
     if (scanner.charCount()) {
       println("      yychar+= zzMarkedPosL-zzStartRead;");
@@ -917,7 +917,7 @@ public final class Emitter {
       println("      }");
     }
 
-    skel.emitNext();
+    skel.emitNext(); // 13
 
     if (scanner.bolUsed()) {
       println("      if (zzAtBOL)");
@@ -937,7 +937,7 @@ public final class Emitter {
     println("      }");
     println();
 
-    skel.emitNext();
+    skel.emitNext(); // 14
   }
 
   private void emitCMapAccess() {
@@ -971,12 +971,12 @@ public final class Emitter {
 
     println("          if ( (zzAttributes & " + FINAL + ") == " + FINAL + " ) {");
 
-    skel.emitNext();
+    skel.emitNext(); // 15
 
     println(
         "            if ( (zzAttributes & " + NOLOOK + ") == " + NOLOOK + " ) break zzForAction;");
 
-    skel.emitNext();
+    skel.emitNext(); // 16
   }
 
   /**
@@ -1369,7 +1369,7 @@ public final class Emitter {
     emitUserCode();
     emitClassName();
 
-    skel.emitNext();
+    skel.emitNext(); // 1
 
     println("  private static final int ZZ_BUFFERSIZE = " + scanner.bufferSize() + ";");
 
@@ -1377,7 +1377,7 @@ public final class Emitter {
       println("  private static final String ZZ_NL = System.getProperty(\"line.separator\");");
     }
 
-    skel.emitNext();
+    skel.emitNext(); // 2
 
     emitLexicalStates();
 
@@ -1391,11 +1391,11 @@ public final class Emitter {
 
     emitDynamicInit();
 
-    skel.emitNext();
+    skel.emitNext(); // 3
 
     emitAttributes();
 
-    skel.emitNext();
+    skel.emitNext(); // 4
 
     emitLookBuffer();
 
@@ -1403,7 +1403,7 @@ public final class Emitter {
 
     emitClassCode();
 
-    skel.emitNext();
+    skel.emitNext(); // 5
 
     emitConstructorDecl();
 
@@ -1431,15 +1431,15 @@ public final class Emitter {
 
     emitCMapAccess();
 
-    skel.emitNext();
+    skel.emitNext(); // 6
 
     emitScanError();
 
-    skel.emitNext();
+    skel.emitNext(); // 9
 
     emitDoEOF();
 
-    skel.emitNext();
+    skel.emitNext(); // 10
 
     emitLexFunctHeader(functionName);
 
@@ -1447,23 +1447,23 @@ public final class Emitter {
 
     emitGetRowMapNext();
 
-    skel.emitNext();
+    skel.emitNext(); // 17
 
     emitEOFVal();
 
-    skel.emitNext();
+    skel.emitNext(); // 18
 
     emitActions();
 
-    skel.emitNext();
+    skel.emitNext(); // 19
 
     emitNoMatch();
 
-    skel.emitNext();
+    skel.emitNext(); // 20
 
     emitMain(functionName);
 
-    skel.emitNext();
+    skel.emitNext(); // 21
 
     out.close();
   }
