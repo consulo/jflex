@@ -1,35 +1,35 @@
   /** Input device. */
-  private java.io.Reader zzReader;
+  private lateinit var zzReader: java.io.Reader
 
   /** Current state of the DFA. */
-  private int zzState;
+  private var zzState: Int = 0
 
   /** Current lexical state. */
-  private int zzLexicalState = YYINITIAL;
+  private var zzLexicalState: Int = YYINITIAL
 
   /**
    * This buffer contains the current text to be matched and is the source of the {@link #yytext()}
    * string.
    */
-  private char zzBuffer[] = new char[Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())];
+  private var zzBuffer: CharArray = CharArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen()))
 
   /** Text position at the last accepting state. */
-  private int zzMarkedPos;
+  private var zzMarkedPos: Int = 0;
 
   /** Current text position in the buffer. */
-  private int zzCurrentPos;
+  private var zzCurrentPos: Int = 0;
 
   /** Marks the beginning of the {@link #yytext()} string in the buffer. */
-  private int zzStartRead;
+  private var zzStartRead: Int = 0;
 
   /** Marks the last character in the buffer, that has been read from input. */
-  private int zzEndRead;
+  private var zzEndRead: Int = 0;
 
   /**
    * Whether the scanner is at the end of file.
    * @see #yyatEOF
    */
-  private boolean zzAtEOF;
+  private var zzAtEOF: Boolean = false;
 
   /**
    * The number of occupied positions in {@link #zzBuffer} beyond {@link #zzEndRead}.
@@ -37,216 +37,221 @@
    * <p>When a lead/high surrogate has been read from the input stream into the final
    * {@link #zzBuffer} position, this will have a value of 1; otherwise, it will have a value of 0.
    */
-  private int zzFinalHighSurrogate = 0;
+  private var zzFinalHighSurrogate: Int = 0;
 
 --- user class code L4
 
 --- constructor declaration L5
 
-  /**
-   * Refills the input buffer.
-   *
-   * @return {@code false} iff there was new input.
-   * @exception java.io.IOException  if any I/O-Error occurs
-   */
-  private boolean zzRefill() throws java.io.IOException {
+    /**
+     * Refills the input buffer.
+     *
+     * @return {@code false} iff there was new input.
+     * @exception java.io.IOException  if any I/O-Error occurs
+     */
+    @Throws(java.io.IOException::class)
+    private fun zzRefill(): Boolean {
 
-    /* first: make room (if you can) */
-    if (zzStartRead > 0) {
-      zzEndRead += zzFinalHighSurrogate;
-      zzFinalHighSurrogate = 0;
-      System.arraycopy(zzBuffer, zzStartRead,
-                       zzBuffer, 0,
-                       zzEndRead - zzStartRead);
+        /* first: make room (if you can) */
+        if (zzStartRead > 0) {
+            zzEndRead += zzFinalHighSurrogate;
+            zzFinalHighSurrogate = 0;
+            System.arraycopy(
+                zzBuffer, zzStartRead,
+                zzBuffer, 0,
+                zzEndRead - zzStartRead
+            );
 
-      /* translate stored positions */
-      zzEndRead -= zzStartRead;
-      zzCurrentPos -= zzStartRead;
-      zzMarkedPos -= zzStartRead;
-      zzStartRead = 0;
-    }
-
-    /* is the buffer big enough? */
-    if (zzCurrentPos >= zzBuffer.length - zzFinalHighSurrogate && zzCanGrow()) {
-      /* if not, and it can grow: blow it up */
-      char newBuffer[] = new char[Math.min(zzBuffer.length * 2, zzMaxBufferLen())];
-      System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
-      zzBuffer = newBuffer;
-      zzEndRead += zzFinalHighSurrogate;
-      zzFinalHighSurrogate = 0;
-    }
-
-    /* fill the buffer with new input */
-    int requested = zzBuffer.length - zzEndRead;
-    int numRead = zzReader.read(zzBuffer, zzEndRead, requested);
-
-    /* not supposed to occur according to specification of java.io.Reader */
-    if (numRead == 0) {
-      if (requested == 0) {
-        throw new java.io.EOFException("Scan buffer limit reached ["+zzBuffer.length+"]");
-      }
-      else {
-        throw new java.io.IOException(
-            "Reader returned 0 characters. See JFlex examples/zero-reader for a workaround.");
-      }
-    }
-    if (numRead > 0) {
-      zzEndRead += numRead;
-      if (Character.isHighSurrogate(zzBuffer[zzEndRead - 1])) {
-        if (numRead == requested) { // We requested too few chars to encode a full Unicode character
-          --zzEndRead;
-          zzFinalHighSurrogate = 1;
-        } else {                    // There is room in the buffer for at least one more char
-          int c = zzReader.read();  // Expecting to read a paired low surrogate char
-          if (c == -1) {
-            return true;
-          } else {
-            zzBuffer[zzEndRead++] = (char)c;
-          }
+            /* translate stored positions */
+            zzEndRead -= zzStartRead;
+            zzCurrentPos -= zzStartRead;
+            zzMarkedPos -= zzStartRead;
+            zzStartRead = 0;
         }
-      }
-      /* potentially more input available */
-      return false;
+
+        /* is the buffer big enough? */
+        if (zzCurrentPos >= zzBuffer.length - zzFinalHighSurrogate && zzCanGrow()) {
+            /* if not, and it can grow: blow it up */
+            val newBuffer: CharArray = CharArray(Math.min(zzBuffer.length * 2, zzMaxBufferLen()));
+            System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
+            zzBuffer = newBuffer;
+            zzEndRead += zzFinalHighSurrogate;
+            zzFinalHighSurrogate = 0;
+        }
+
+        /* fill the buffer with new input */
+        val requested: Int = zzBuffer.length - zzEndRead;
+        val numRead: Int = zzReader.read(zzBuffer, zzEndRead, requested);
+
+        /* not supposed to occur according to specification of java.io.Reader */
+        if (numRead == 0) {
+            if (requested == 0) {
+                throw java.io.EOFException("Scan buffer limit reached [" + zzBuffer.length + "]");
+            } else {
+                throw java.io.IOException(
+                    "Reader returned 0 characters. See JFlex examples/zero-reader for a workaround."
+                );
+            }
+        }
+        if (numRead > 0) {
+            zzEndRead += numRead;
+            if (Character.isHighSurrogate(zzBuffer[zzEndRead - 1])) {
+                if (numRead == requested) { // We requested too few chars to encode a full Unicode character
+                    --zzEndRead;
+                    zzFinalHighSurrogate = 1;
+                } else {                    // There is room in the buffer for at least one more char
+                    val c: Int = zzReader.read();  // Expecting to read a paired low surrogate char
+                    if (c == -1) {
+                        return true;
+                    } else {
+                        zzBuffer[zzEndRead++] = (Char) c;
+                    }
+                }
+            }
+            /* potentially more input available */
+            return false;
+        }
+
+        /* numRead < 0 ==> end of stream */
+        return true;
     }
 
-    /* numRead < 0 ==> end of stream */
-    return true;
-  }
 
+    /**
+     * Closes the input reader.
+     *
+     * @throws java.io.IOException if the reader could not be closed.
+     */
+    @Throws(java.io.IOException::class)
+    fun yyclose() {
+        zzAtEOF = true; // indicate end of file
+        zzEndRead = zzStartRead; // invalidate buffer
 
-  /**
-   * Closes the input reader.
-   *
-   * @throws java.io.IOException if the reader could not be closed.
-   */
-  public final void yyclose() throws java.io.IOException {
-    zzAtEOF = true; // indicate end of file
-    zzEndRead = zzStartRead; // invalidate buffer
-
-    if (zzReader != null) {
-      zzReader.close();
+        if (zzReader != null) {
+            zzReader.close();
+        }
     }
-  }
 
 
-  /**
-   * Resets the scanner to read from a new input stream.
-   *
-   * <p>Does not close the old reader.
-   *
-   * <p>All internal variables are reset, the old input stream <b>cannot</b> be reused (internal
-   * buffer is discarded and lost). Lexical state is set to {@code ZZ_INITIAL}.
-   *
-   * <p>Internal scan buffer is resized down to its initial length, if it has grown.
-   *
-   * @param reader The new input stream.
-   */
-  public final void yyreset(java.io.Reader reader) {
-    zzReader = reader;
-    zzEOFDone = false;
-    yyResetPosition();
-    zzLexicalState = YYINITIAL;
-    int initBufferSize = Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen());
-    if (zzBuffer.length > initBufferSize) {
-      zzBuffer = new char[initBufferSize];
+    /**
+     * Resets the scanner to read from a new input stream.
+     *
+     * <p>Does not close the old reader.
+     *
+     * <p>All internal variables are reset, the old input stream <b>cannot</b> be reused (internal
+     * buffer is discarded and lost). Lexical state is set to {@code ZZ_INITIAL}.
+     *
+     * <p>Internal scan buffer is resized down to its initial length, if it has grown.
+     *
+     * @param reader The new input stream.
+     */
+    fun yyreset(reader: java.io.Reader) {
+        zzReader = reader;
+        zzEOFDone = false;
+        yyResetPosition();
+        zzLexicalState = YYINITIAL;
+        val initBufferSize: Int = Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen());
+        if (zzBuffer.length > initBufferSize) {
+            zzBuffer = CharArray(initBufferSize);
+        }
     }
-  }
 
-  /**
-   * Resets the input position.
-   */
-  private final void yyResetPosition() {
-      zzAtBOL  = true;
-      zzAtEOF  = false;
-      zzCurrentPos = 0;
-      zzMarkedPos = 0;
-      zzStartRead = 0;
-      zzEndRead = 0;
-      zzFinalHighSurrogate = 0;
-      yyline = 0;
-      yycolumn = 0;
-      yychar = 0L;
-  }
-
-
-  /**
-   * Returns whether the scanner has reached the end of the reader it reads from.
-   *
-   * @return whether the scanner has reached EOF.
-   */
-  public final boolean yyatEOF() {
-    return zzAtEOF;
-  }
+    /**
+     * Resets the input position.
+     */
+    private fun yyResetPosition() {
+        zzAtBOL = true;
+        zzAtEOF = false;
+        zzCurrentPos = 0;
+        zzMarkedPos = 0;
+        zzStartRead = 0;
+        zzEndRead = 0;
+        zzFinalHighSurrogate = 0;
+        yyline = 0;
+        yycolumn = 0;
+        yychar = 0L;
+    }
 
 
-  /**
-   * Returns the current lexical state.
-   *
-   * @return the current lexical state.
-   */
-  public final int yystate() {
-    return zzLexicalState;
-  }
+    /**
+     * Returns whether the scanner has reached the end of the reader it reads from.
+     *
+     * @return whether the scanner has reached EOF.
+     */
+    fun yyatEOF(): Boolean {
+        return zzAtEOF;
+    }
 
 
-  /**
-   * Enters a new lexical state.
-   *
-   * @param newState the new lexical state
-   */
-  public final void yybegin(int newState) {
-    zzLexicalState = newState;
-  }
+    /**
+     * Returns the current lexical state.
+     *
+     * @return the current lexical state.
+     */
+    fun yystate(): Int {
+        return zzLexicalState;
+    }
 
 
-  /**
-   * Returns the text matched by the current regular expression.
-   *
-   * @return the matched text.
-   */
-  public final String yytext() {
-    return new String(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
-  }
+    /**
+     * Enters a new lexical state.
+     *
+     * @param newState the new lexical state
+     */
+    fun yybegin(newState: Int) {
+        zzLexicalState = newState;
+    }
 
 
-  /**
-   * Returns the character at the given position from the matched text.
-   *
-   * <p>It is equivalent to {@code yytext().charAt(pos)}, but faster.
-   *
-   * @param position the position of the character to fetch. A value from 0 to {@code yylength()-1}.
-   *
-   * @return the character at {@code position}.
-   */
-  public final char yycharat(int position) {
-    return zzBuffer[zzStartRead + position];
-  }
+    /**
+     * Returns the text matched by the current regular expression.
+     *
+     * @return the matched text.
+     */
+    fun yytext(): String {
+        return String(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+    }
 
 
-  /**
-   * How many characters were matched.
-   *
-   * @return the length of the matched text region.
-   */
-  public final int yylength() {
-    return zzMarkedPos-zzStartRead;
-  }
+    /**
+     * Returns the character at the given position from the matched text.
+     *
+     * <p>It is equivalent to {@code yytext().charAt(pos)}, but faster.
+     *
+     * @param position the position of the character to fetch. A value from 0 to {@code yylength()-1}.
+     *
+     * @return the character at {@code position}.
+     */
+    fun yycharat(position: Int): Char {
+        return zzBuffer[zzStartRead + position];
+    }
 
 
-  /**
-   * Reports an error that occurred while scanning.
-   *
-   * <p>In a well-formed scanner (no or only correct usage of {@code yypushback(int)} and a
-   * match-all fallback rule) this method will only be called with things that
-   * "Can't Possibly Happen".
-   *
-   * <p>If this method is called, something is seriously wrong (e.g. a JFlex bug producing a faulty
-   * scanner etc.).
-   *
-   * <p>Usual syntax/scanner level error handling should be done in error fallback rules.
-   *
-   * @param errorCode the code of the error message to display.
-   */
+    /**
+     * How many characters were matched.
+     *
+     * @return the length of the matched text region.
+     */
+    fun yylength(): Int {
+        return zzMarkedPos - zzStartRead;
+    }
+
+
+    /**
+     * Reports an error that occurred while scanning.
+     *
+     * <p>In a well-formed scanner (no or only correct usage of {@code yypushback(int)} and a
+     * match-all fallback rule) this method will only be called with things that
+     * "Can't Possibly Happen".
+     *
+     * <p>If this method is called, something is seriously wrong (e.g. a JFlex bug producing a faulty
+     * scanner etc.).
+     *
+     * <p>Usual syntax/scanner level error handling should be done in error fallback rules.
+     *
+     * @param errorCode the code of the error message to display.
+     */
+
 --- zzScanError declaration L6
 
 
@@ -277,14 +282,14 @@
    * @exception java.io.IOException if any I/O-Error occurs.
    */
 --- yylex declaration L10
-    int zzInput;
-    int zzAction;
+    val zzInput: Int = 0;
+    val zzAction: Int = 0;
 
     // cached fields:
-    int zzCurrentPosL;
-    int zzMarkedPosL;
-    int zzEndReadL = zzEndRead;
-    char[] zzBufferL = zzBuffer;
+    val zzCurrentPosL: Int = 0;
+    val zzMarkedPosL: Int = 0;
+    val zzEndReadL: Int = zzEndRead;
+    val zzBufferL: CharArray = zzBuffer;
 
 --- local declarations L11
 
@@ -298,7 +303,7 @@
 
 --- start admin (lexstate etc) L13
 
-      zzForAction: {
+      run zzForAction@{
         while (true) {
 
 --- next input, line, col, char count, next transition, isFinal action L14
@@ -320,7 +325,7 @@
       }
       else {
 --- actions L18
-          default:
+          else ->
 --- no match L19
         }
       }
@@ -331,7 +336,7 @@
 
 companion object {
   /** This character denotes the end of file. */
-  public final int YYEOF = -1;
+  val YYEOF: Int = -1;
 
   /** Initial size of the lookahead buffer. */
 --- private static final int ZZ_BUFFERSIZE = ...; L1
@@ -339,29 +344,28 @@ companion object {
   // Lexical states.
 ---  lexical states, charmap L2
 
-  /** Error code for "Unknown internal scanner error". */
-  private static final int ZZ_UNKNOWN_ERROR = 0;
-  /** Error code for "could not match input". */
-  private static final int ZZ_NO_MATCH = 1;
-  /** Error code for "pushback value was too large". */
-  private static final int ZZ_PUSHBACK_2BIG = 2;
+  /** error code for "unknown internal scanner error". */
+  private val zz_unknown_error: Int = 0;
+  /** error code for "could not match input". */
+  private val zz_no_match: Int = 1;
+  /** error code for "pushback value was too large". */
+  private val zz_pushback_2big: Int = 2;
 
   /**
-   * Error messages for {@link #ZZ_UNKNOWN_ERROR}, {@link #ZZ_NO_MATCH}, and
-   * {@link #ZZ_PUSHBACK_2BIG} respectively.
+   * error messages for {@link #zz_unknown_error}, {@link #zz_no_match}, and
+   * {@link #zz_pushback_2big} respectively.
    */
-  private static final String ZZ_ERROR_MSG[] = {
-    "Unknown internal scanner error",
-    "Error: could not match input",
-    "Error: pushback value was too large"
-  };
+  val zz_error_msg = arrayOf(
+    "unknown internal scanner error",
+    "error: could not match input",
+    "error: pushback value was too large"
+  );
 
 --- isFinal list L3
-    String message;
-    try {
-      message = ZZ_ERROR_MSG[errorCode];
-    } catch (ArrayIndexOutOfBoundsException e) {
-      message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
+    val message: String = try {
+        ZZ_ERROR_MSG[errorCode];
+    } catch (e: ArrayIndexOutOfBoundsException ) {
+        ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
 
 --- throws clause L7
