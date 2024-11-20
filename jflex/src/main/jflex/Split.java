@@ -2131,10 +2131,12 @@ public final class LexScan extends AbstractLexScan implements java_cup.runtime.S
             message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
         }
 
-        throw new Error(message);
 //         ==================== /emitNext L7 I ===================
-//         ==================== emitNext L8 I ===================
+        throw new Error(message);
     }
+//         ==================== /emitScanError ===================
+//         ==================== emitPushback ====================
+//         ==================== emitNext L8 I ===================
 
 
     /**
@@ -2147,7 +2149,7 @@ public final class LexScan extends AbstractLexScan implements java_cup.runtime.S
      */
 //         ==================== /emitNext L8 I ===================
     public void yypushback(int number)  {
-//         ==================== /emitScanError ===================
+//         ==================== /emitPushback ===================
 //         ==================== emitNext L9 ===================
         if ( number > yylength() )
             zzScanError(ZZ_PUSHBACK_2BIG);
@@ -2445,10 +2447,10 @@ public final class LexScan extends AbstractLexScan implements java_cup.runtime.S
                     }
                 }
 //         ==================== /emitEOFVal ===================
-//         ==================== emitNext L17 ===================
+//         ==================== emitNext L18 ===================
             }
             else {
-//         ==================== /emitNext L17 ===================
+//         ==================== /emitNext L18 ===================
 //         ==================== emitActions ===================
                 switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
                     case 1:
