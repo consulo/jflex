@@ -200,53 +200,6 @@ public final class Emitter {
     else println(" throws " + scanner.scanErrorException + " {");
   }
 
-  private void emitTokenDebug(String functionName) {
-    println("  /**");
-    println("   * Same as " + functionName + " but also prints the token to standard out");
-    println("   * for debugging.");
-    println("   */");
-
-    if (scanner.cupCompatible() || scanner.cup2Compatible()) {
-      // cup interface forces public method
-      print("  public ");
-    } else {
-      print("  " + visibility + " ");
-    }
-    if (scanner.tokenType() == null) {
-      if (scanner.isInteger()) print("int");
-      else if (scanner.isIntWrap()) print("Integer");
-      else print("Yytoken");
-    } else print(scanner.tokenType());
-
-    print(" debug_");
-
-    print(functionName);
-
-    print("() throws java.io.IOException");
-
-    for (String thrown : scanner.lexThrow()) {
-      print("\n    , ");
-      print(thrown);
-    }
-
-    if (scanner.scanErrorException() != null) {
-      print(", ");
-      print(scanner.scanErrorException());
-    }
-
-    println(" {");
-
-    println("    " + scanner.tokenType() + " s = " + functionName + "();");
-    print("    System.out.println( ");
-    if (scanner.lineCount()) print("\"line:\" + (yyline+1) + ");
-    if (scanner.columnCount()) print("\" col:\" + (yycolumn+1) + ");
-    if (scanner.charCount()) print("\" char:\" + yychar + ");
-    println("\" --\"+ yytext() + \"--\" + getTokenName(s.sym) + \"--\");");
-    println("    return s;");
-    println("  }");
-    println("");
-  }
-
   private void emitMain(String functionName) {
     if (!(scanner.standalone() || scanner.debugOption() || scanner.cupDebug())) return;
 
@@ -271,6 +224,50 @@ public final class Emitter {
       println("    }");
       println("");
       println("    return \"UNKNOWN TOKEN\";");
+      println("  }");
+      println("");
+      println("  /**");
+      println("   * Same as " + functionName + " but also prints the token to standard out");
+      println("   * for debugging.");
+      println("   */");
+
+      if (scanner.cupCompatible() || scanner.cup2Compatible()) {
+        // cup interface forces public method
+        print("  public ");
+      } else {
+        print("  " + visibility + " ");
+      }
+      if (scanner.tokenType() == null) {
+        if (scanner.isInteger()) print("int");
+        else if (scanner.isIntWrap()) print("Integer");
+        else print("Yytoken");
+      } else print(scanner.tokenType());
+
+      print(" debug_");
+
+      print(functionName);
+
+      print("() throws java.io.IOException");
+
+      for (String thrown : scanner.lexThrow()) {
+        print("\n    , ");
+        print(thrown);
+      }
+
+      if (scanner.scanErrorException() != null) {
+        print(", ");
+        print(scanner.scanErrorException());
+      }
+
+      println(" {");
+
+      println("    " + scanner.tokenType() + " s = " + functionName + "();");
+      print("    System.out.println( ");
+      if (scanner.lineCount()) print("\"line:\" + (yyline+1) + ");
+      if (scanner.columnCount()) print("\" col:\" + (yycolumn+1) + ");
+      if (scanner.charCount()) print("\" char:\" + yychar + ");
+      println("\" --\"+ yytext() + \"--\" + getTokenName(s.sym) + \"--\");");
+      println("    return s;");
       println("  }");
       println("");
     }
@@ -1372,6 +1369,32 @@ public final class Emitter {
     emitUserCode();
     emitClassName();
 
+    skel.emitNext(); // 1
+
+    println("  private static final int ZZ_BUFFERSIZE = " + scanner.bufferSize() + ";");
+
+    if (scanner.debugOption()) {
+      println("  private static final String ZZ_NL = System.getProperty(\"line.separator\");");
+    }
+
+    skel.emitNext(); // 2
+
+    emitLexicalStates();
+
+    emitCharMapTables();
+
+    emitActionTable();
+
+    reduceRows();
+
+    emitRowMapArray();
+
+    emitDynamicInit();
+
+    skel.emitNext(); // 3
+
+    emitAttributes();
+
     skel.emitNext(); // 4
 
     emitLookBuffer();
@@ -1406,6 +1429,8 @@ public final class Emitter {
 
     emitTokenSizeLimit(scanner.getTokenSizeLimit());
 
+    emitCMapAccess();
+
     skel.emitNext(); // 6
 
     emitScanError();
@@ -1436,40 +1461,8 @@ public final class Emitter {
 
     skel.emitNext(); // 20
 
-    emitTokenDebug(functionName);
-
-    // must be placed in companion object
-    skel.emitNext(); // 1
-
-    println("  private static final int ZZ_BUFFERSIZE = " + scanner.bufferSize() + ";");
-
-    if (scanner.debugOption()) {
-      println("  private static final String ZZ_NL = System.getProperty(\"line.separator\");");
-    }
-
-    skel.emitNext(); // 2
-
-    emitLexicalStates();
-
-    emitCharMapTables();
-
-    emitActionTable();
-
-    reduceRows();
-
-    emitRowMapArray();
-
-    emitDynamicInit();
-
-    skel.emitNext(); // 3
-
-    emitAttributes();
-
-    emitCMapAccess();
-
     emitMain(functionName);
 
-    // closing
     skel.emitNext(); // 21
 
     out.close();
