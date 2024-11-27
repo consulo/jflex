@@ -5,6 +5,10 @@
 
 package jflex.generator;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import jflex.base.Build;
 import jflex.base.Pair;
 import jflex.core.*;
@@ -17,11 +21,6 @@ import jflex.l10n.ErrorMessages;
 import jflex.logging.Out;
 import jflex.option.Options;
 import jflex.skeleton.Skeleton;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This class manages the actual code generation, putting the scanner together, filling in skeleton
@@ -72,7 +71,8 @@ public final class KotlinEmitter {
    * @param dfa a {@link DFA}.
    * @param writer output file.
    */
-  KotlinEmitter(String outputFileName, File inputFile, LexParse parser, DFA dfa, PrintWriter writer) {
+  KotlinEmitter(
+      String outputFileName, File inputFile, LexParse parser, DFA dfa, PrintWriter writer) {
     this.outputFileName = outputFileName;
     this.out = writer;
     this.parser = parser;
@@ -173,31 +173,31 @@ public final class KotlinEmitter {
 
     println("  /** For the backwards DFA of general lookahead statements */");
     println(
-        "  private boolean [] zzFin = new boolean [Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())+1];");
+        "  private val zzFin: BooleanArray = BooleanArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())+1);");
     println();
   }
 
   private void emitScanError() {
-    print("  private static void zzScanError(int errorCode)");
-
-    if (scanner.scanErrorException() != null) print(" throws " + scanner.scanErrorException());
+    if (scanner.scanErrorException() != null)
+      println("  @Throws(" + scanner.scanErrorException() + "::class)");
+    print("  private fun zzScanError(errorCode: Int)");
 
     println(" {");
 
     skel.emitNext(); // 7
 
-    if (scanner.scanErrorException() == null) println("    throw new Error(message);");
-    else println("    throw new " + scanner.scanErrorException() + "(message);");
+    if (scanner.scanErrorException() == null) println("    throw Error(message);");
+    else println("    throw " + scanner.scanErrorException() + "(message);");
     println("  }");
   }
 
   private void emitPushback() {
     skel.emitNext(); // 8
 
-    print("  " + visibility + " void yypushback(int number) ");
-
+    if (scanner.scanErrorException() != null)
+      println("  @Throws(" + scanner.scanErrorException + "::class)");
+    print("  " + visibility + " fun yypushback(number: Int) ");
     if (scanner.scanErrorException() == null) println(" {");
-    else println(" throws " + scanner.scanErrorException + " {");
 
     skel.emitNext(); // 9
   }
@@ -257,18 +257,18 @@ public final class KotlinEmitter {
       println("   * Converts an int token code into the name of the");
       println("   * token by reflection on the cup symbol class/interface " + scanner.cupSymbol());
       println("   */");
-      println("  private static String getTokenName(int token) {");
+      println("  private fun getTokenName(token: Int): String {");
       println("    try {");
       println(
-          "      java.lang.reflect.Field [] classFields = "
+          "       var classFields: Array<java.lang.reflect.Field> = "
               + scanner.cupSymbol()
               + ".class.getFields();");
-      println("      for (int i = 0; i < classFields.length; i++) {");
+      println("      for (i in classFields.indices) {");
       println("        if (classFields[i].getInt(null) == token) {");
       println("          return classFields[i].getName();");
       println("        }");
       println("      }");
-      println("    } catch (Exception e) {");
+      println("    } catch (e: Exception) {");
       println("      e.printStackTrace(System.err);");
       println("    }");
       println("");
@@ -302,56 +302,54 @@ public final class KotlinEmitter {
 
     String className = getBaseName(scanner.className());
 
-    println("  public static void main(String[] argv) {");
-    println("    if (argv.length == 0) {");
+    println("  public fun main(argv: Array<String>) {");
+    println("    if (argv.isEmpty()) {");
     println(
-        "      System.out.println(\"Usage : java "
-            + className
-            + " [ --encoding <name> ] <inputfile(s)>\");");
+        "      println(\"Usage : java " + className + " [ --encoding <name> ] <inputfile(s)>\");");
     println("    }");
     println("    else {");
-    println("      int firstFilePos = 0;");
-    println("      String encodingName = \"UTF-8\";");
+    println("      var firstFilePos = 0;");
+    println("      var encodingName = \"UTF-8\";");
     println("      if (argv[0].equals(\"--encoding\")) {");
     println("        firstFilePos = 2;");
     println("        encodingName = argv[1];");
     println("        try {");
     println("          // Side-effect: is encodingName valid?");
     println("          java.nio.charset.Charset.forName(encodingName);");
-    println("        } catch (Exception e) {");
-    println("          System.out.println(\"Invalid encoding '\" + encodingName + \"'\");");
+    println("        } catch (e: Exception) {");
+    println("          println(\"Invalid encoding '\" + encodingName + \"'\");");
     println("          return;");
     println("        }");
     println("      }");
-    println("      for (int i = firstFilePos; i < argv.length; i++) {");
-    println("        " + className + " scanner = null;");
-    println("        java.io.FileInputStream stream = null;");
-    println("        java.io.Reader reader = null;");
+    println("      for (i in firstFilePos..<argv.size) {");
+    println("        var scanner: " + className + "? = null");
+    println("        var stream: java.io.FileInputStream? = null");
+    println("        var reader: java.io.Reader? = null");
     println("        try {");
-    println("          stream = new java.io.FileInputStream(argv[i]);");
-    println("          reader = new java.io.InputStreamReader(stream, encodingName);");
-    println("          scanner = new " + className + "(reader);");
+    println("          stream = java.io.FileInputStream(argv[i]);");
+    println("          reader = java.io.InputStreamReader(stream, encodingName);");
+    println("          scanner = " + className + "(reader);");
     if (scanner.standalone()) {
       println("          while ( !scanner.zzAtEOF ) scanner." + functionName + "();");
     } else if (scanner.cupDebug()) {
       println("          while ( !scanner.zzAtEOF ) scanner.debug_" + functionName + "();");
     } else {
       println("          do {");
-      println("            System.out.println(scanner." + functionName + "());");
+      println("            println(scanner." + functionName + "());");
       println("          } while (!scanner.zzAtEOF);");
       println("");
     }
 
     println("        }");
-    println("        catch (java.io.FileNotFoundException e) {");
-    println("          System.out.println(\"File not found : \\\"\"+argv[i]+\"\\\"\");");
+    println("        catch (e: java.io.FileNotFoundException) {");
+    println("          println(\"File not found : \\\"\"+argv[i]+\"\\\"\");");
     println("        }");
-    println("        catch (java.io.IOException e) {");
-    println("          System.out.println(\"IO error scanning file \\\"\"+argv[i]+\"\\\"\");");
-    println("          System.out.println(e);");
+    println("        catch (e: java.io.IOException) {");
+    println("          println(\"IO error scanning file \\\"\"+argv[i]+\"\\\"\");");
+    println("          println(e);");
     println("        }");
-    println("        catch (Exception e) {");
-    println("          System.out.println(\"Unexpected exception:\");");
+    println("        catch (e: Exception) {");
+    println("          println(\"Unexpected exception:\");");
     println("          e.printStackTrace();");
     println("        }");
     println("        finally {");
@@ -359,18 +357,18 @@ public final class KotlinEmitter {
     println("            try {");
     println("              reader.close();");
     println("            }");
-    println("            catch (java.io.IOException e) {");
-    println("              System.out.println(\"IO error closing file \\\"\"+argv[i]+\"\\\"\");");
-    println("              System.out.println(e);");
+    println("            catch (e: java.io.IOException) {");
+    println("              println(\"IO error closing file \\\"\"+argv[i]+\"\\\"\");");
+    println("              println(e);");
     println("            }");
     println("          }");
     println("          if (stream != null) {");
     println("            try {");
     println("              stream.close();");
     println("            }");
-    println("            catch (java.io.IOException e) {");
-    println("              System.out.println(\"IO error closing file \\\"\"+argv[i]+\"\\\"\");");
-    println("              System.out.println(e);");
+    println("            catch (e: java.io.IOException) {");
+    println("              println(\"IO error closing file \\\"\"+argv[i]+\"\\\"\");");
+    println("              println(e);");
     println("            }");
     println("          }");
     println("        }");
@@ -447,22 +445,18 @@ public final class KotlinEmitter {
       // TODO(#222) Actually fix the fall-through violations
       println("@SuppressWarnings(\"fallthrough\")");
     }
-    if (scanner.isPublic()) print("public ");
-
     if (scanner.isAbstract()) print("abstract ");
-
-    if (scanner.isFinal()) print("final ");
 
     print("class ");
     print(scanner.className());
 
     if (scanner.isExtending() != null) {
-      print(" extends ");
+      print(" : ");
       print(scanner.isExtending());
     }
 
     if (scanner.isImplementing() != null) {
-      print(" implements ");
+      print(", ");
       print(scanner.isImplementing());
     }
 
@@ -473,7 +467,7 @@ public final class KotlinEmitter {
     for (String name : scanner.stateNames()) {
       int num = scanner.getStateNumber(name);
 
-      println("  " + visibility + " static final int " + name + " = " + 2 * num + ";");
+      println("  " + visibility + " val " + name + ": Int = " + 2 * num);
     }
 
     // can't quite get rid of the indirection, even for non-bol lex states:
@@ -486,7 +480,7 @@ public final class KotlinEmitter {
     println("   *                  at the beginning of a line");
     println("   * l is of the form l = 2*k, k a non negative integer");
     println("   */");
-    println("  private static final int ZZ_LEXSTATE[] = {");
+    println("  private val ZZ_LEXSTATE: IntArray = intArrayOf(");
 
     int i, j = 0;
     print("    ");
@@ -504,7 +498,7 @@ public final class KotlinEmitter {
     }
 
     println(dfa.entryState(i));
-    println("  };");
+    println("  )");
   }
 
   private void emitDynamicInit() {
@@ -682,12 +676,12 @@ public final class KotlinEmitter {
       // convenience methods for CUP2
       println();
       println("  /* CUP2 code: */");
-      println("  private <T> ScannerToken<T> token(Terminal terminal, T value) {");
-      println("    return new ScannerToken<T>(terminal, value, yyline, yycolumn);");
+      println("  private fun <T> token(terminal: Terminal, value: T): ScannerToken<T> {");
+      println("    return ScannerToken<T>(terminal, value, yyline, yycolumn);");
       println("  }");
       println();
-      println("  private ScannerToken<Object> token(Terminal terminal) {");
-      println("    return new ScannerToken<Object>(terminal, yyline, yycolumn);");
+      println("  private fun token(terminal: Terminal): ScannerToken<Object> {");
+      println("    return ScannerToken<Object>(terminal, yyline, yycolumn);");
       println("  }");
       println();
     }
@@ -757,26 +751,20 @@ public final class KotlinEmitter {
     println("   * when the end of file is reached");
     println("   */");
 
-    print("  private void zzDoEOF()");
-
-    if (eofThrow != null) {
-      print(" throws ");
-      print(eofThrow);
-    }
-
-    println(" {");
+    if (eofThrow != null) println("  @Throws(" + eofThrow + "::class)");
+    println("  private fun zzDoEOF() {");
 
     println("    if (!zzEOFDone) {");
     println("      zzEOFDone = true;");
     println("    ");
-    print(/*    */ eofCode);
+    println(/*    */ eofCode);
     println("    }");
     println("  }");
-    println("");
     println("");
   }
 
   private void emitLexFunctHeader(String functionName) {
+    println("  @Throws(java.io.IOException::class)");
 
     if (scanner.cupCompatible() || scanner.cup2Compatible()) {
       print("  @Override");
@@ -796,7 +784,7 @@ public final class KotlinEmitter {
 
     print(functionName);
 
-    print("() throws java.io.IOException");
+    print("()");
 
     for (String thrown : scanner.lexThrow()) {
       print("\n    , ");
@@ -949,21 +937,21 @@ public final class KotlinEmitter {
     println("  /**");
     println("   * Translates raw input code points to DFA table row");
     println("   */");
-    println("  private static int zzCMap(int input) {");
+    println("  private fun zzCMap(input: Int): Int {");
     if (parser.getCharClasses().getMaxCharCode() <= 0xFF) {
       println("    return ZZ_CMAP[input];");
     } else {
-      println("    int offset = input & " + (CMapBlock.BLOCK_SIZE - 1) + ";");
+      println("    val offset: Int = input and " + (CMapBlock.BLOCK_SIZE - 1) + ";");
       println(
-          "    return offset == input"
-              + " ?"
+          "    return if(offset == input)"
               + " ZZ_CMAP_BLOCKS[offset]"
-              + " :"
+              + " else"
               + " ZZ_CMAP_BLOCKS[ZZ_CMAP_TOP[input >> "
               + CMapBlock.BLOCK_BITS
-              + "] | offset];");
+              + "] or offset];");
     }
     println("  }");
+    println("");
   }
 
   private void emitGetRowMapNext() {
@@ -1068,7 +1056,7 @@ public final class KotlinEmitter {
     println(
         "  /** Returns the maximum size of the scanner buffer, which limits the size of tokens."
             + " */");
-    println("  private int zzMaxBufferLen() {");
+    println("  private fun zzMaxBufferLen(): Int {");
     if (limit == null) {
       println("    return Integer.MAX_VALUE;");
     } else {
@@ -1077,7 +1065,7 @@ public final class KotlinEmitter {
     println("  }");
     println();
     println("  /**  Whether the scanner buffer can grow to accommodate a larger token. */");
-    println("  private boolean zzCanGrow() {");
+    println("  private val zzCanGrow(): Boolean {");
     if (limit == null) {
       println("    return true;");
     } else {
@@ -1332,32 +1320,32 @@ public final class KotlinEmitter {
     if (!scanner.lineCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private int yyline;");
+    println("  private val yyline: Int;");
     println();
     println(
         "  /** Number of characters from the last newline up to the start of the matched text. */");
     if (!scanner.columnCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private int yycolumn;");
+    println("  private val yycolumn: Int;");
     println();
     println("  /** Number of characters up to the start of the matched text. */");
     if (!scanner.charCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private long yychar;");
+    println("  private val yychar: Long;");
     println();
     println("  /** Whether the scanner is currently at the beginning of a line. */");
     if (!scanner.bolUsed()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private boolean zzAtBOL = true;");
+    println("  private val zzAtBOL: Boolean = true;");
     println();
     println("  /** Whether the user-EOF-code has already been executed. */");
     if (eofCode == null) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private boolean zzEOFDone;");
+    println("  private val zzEOFDone: Boolean;");
     println();
   }
 
@@ -1441,10 +1429,10 @@ public final class KotlinEmitter {
     // must be placed in companion object
     skel.emitNext(); // 1
 
-    println("  private static final int ZZ_BUFFERSIZE = " + scanner.bufferSize() + ";");
+    println("  private val ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
 
     if (scanner.debugOption()) {
-      println("  private static final String ZZ_NL = System.getProperty(\"line.separator\");");
+      println("  private val ZZ_NL: String = System.getProperty(\"line.separator\")");
     }
 
     skel.emitNext(); // 2
