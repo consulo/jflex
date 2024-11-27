@@ -80,8 +80,9 @@ public abstract class PackEmitter {
 
   /** Emit declaration of decoded member and open first chunk. */
   public void emitInit() {
-    out.append("  private static final int [] ");
+    out.append("  private val ");
     out.append(constName());
+    out.append(": IntArray");
     out.append(" = zzUnpack");
     out.append(name);
     out.append("();");
@@ -135,10 +136,11 @@ public abstract class PackEmitter {
   /** emit next chunk */
   private void nextChunk() {
     nl();
-    out.append("  private static final String ");
+    out.append("  private val ");
     out.append(constName());
     out.append("_PACKED_");
     out.append(chunks);
+    out.append(": String ");
     out.append(" =");
     nl();
     out.append(indent);

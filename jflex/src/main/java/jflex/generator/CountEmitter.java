@@ -51,9 +51,9 @@ public class CountEmitter extends PackEmitter {
     println("\";");
 
     nl();
-    println("  private static int [] zzUnpack" + name + "() {");
-    println("    int [] result = new int[" + numEntries + "];");
-    println("    int offset = 0;");
+    println("  private fun zzUnpack" + name + "(): IntArray {");
+    println("    val result: IntArray = IntArray(" + numEntries + ");");
+    println("    var offset: Int = 0;");
 
     for (int i = 0; i < chunks; i++) {
       println(
@@ -81,19 +81,23 @@ public class CountEmitter extends PackEmitter {
    */
   protected void emitUnpackChunk() {
     println(
-        "  private static int zzUnpack" + name + "(String packed, int offset, int [] result) {");
-    println("    int i = 0;       /* index in packed string  */");
-    println("    int j = offset;  /* index in unpacked array */");
-    println("    int l = packed.length();");
+        "  private fun zzUnpack"
+            + name
+            + "(packed: String , offset: Int, result: IntArray): Int {");
+    println("    var i: Int = 0;       /* index in packed string  */");
+    println("    var j: Int = offset;  /* index in unpacked array */");
+    println("    val l: Int = packed.length;");
     println("    while (i < l) {");
-    println("      int count = packed.charAt(i++);");
-    println("      int value = packed.charAt(i++);");
+    println("      var count: Int = packed[i++];");
+    println("      val value: Int = packed[i++];");
     if (translate == 1) {
       println("      value--;");
     } else if (translate != 0) {
       println("      value-= " + translate);
     }
-    println("      do result[j++] = value; while (--count > 0);");
+    println("      do");
+    println("          result[j++] = value");
+    println("      while (--count > 0)");
     println("    }");
     println("    return j;");
     println("  }");
