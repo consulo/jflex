@@ -28,15 +28,15 @@ public final class Emitters {
    * @param inputLexFile input grammar.
    * @param parser a {@link LexParse}.
    * @param dfa a {@link DFA}.
-   * @return {@link Emitter}.
+   * @return {@link KotlinEmitter}.
    * @throws IOException if any.
    */
-  public static Emitter createFileEmitter(File inputLexFile, LexParse parser, DFA dfa)
+  public static KotlinEmitter createFileEmitter(File inputLexFile, LexParse parser, DFA dfa)
       throws IOException {
 
-    String name = Emitter.getBaseName(parser.scanner.className()) + ".java";
+    String name = KotlinEmitter.getBaseName(parser.scanner.className()) + ".java";
 
-    File outputFile = Emitter.normalize(name, inputLexFile);
+    File outputFile = KotlinEmitter.normalize(name, inputLexFile);
     String outputFileName = outputFile.getAbsolutePath();
 
     Out.println("Writing code to \"" + outputFile + "\"");
@@ -46,7 +46,7 @@ public final class Emitters {
             new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(outputFile), Options.encoding)));
 
-    return new Emitter(outputFileName, inputLexFile, parser, dfa, out);
+    return new KotlinEmitter(outputFileName, inputLexFile, parser, dfa, out);
   }
 
   /**
@@ -55,9 +55,10 @@ public final class Emitters {
    * @param parser a {@link LexParse}.
    * @param dfa a {@link DFA}.
    * @param writer output file.
-   * @return {@link Emitter}.
+   * @return {@link KotlinEmitter}.
    */
-  public static Emitter createPrintWriterEmitter(LexParse parser, DFA dfa, PrintWriter writer) {
-    return new Emitter(null, new File(""), parser, dfa, writer);
+  public static KotlinEmitter createPrintWriterEmitter(
+      LexParse parser, DFA dfa, PrintWriter writer) {
+    return new KotlinEmitter(null, new File(""), parser, dfa, writer);
   }
 }
