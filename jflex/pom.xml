@@ -55,7 +55,10 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
-  <dependencies>
+    <properties>
+        <kotlin.version>2.0.21</kotlin.version>
+    </properties>
+    <dependencies>
     <dependency>
       <groupId>com.github.vbmacher</groupId>
       <artifactId>java-cup-runtime</artifactId>
@@ -107,7 +110,18 @@
       <version>1.7.36</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
   <build>
     <plugins>
       <plugin>
@@ -224,6 +238,72 @@
           </execution>
         </executions>
       </plugin>
+        <plugin>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-plugin</artifactId>
+            <version>${kotlin.version}</version>
+            <executions>
+                <execution>
+                    <id>compile</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                    <configuration>
+                        <sourceDirs>
+                            <source>src/main/java</source>
+                            <source>target/generated-sources/annotations</source>
+                            <source>target/generated-sources/cup</source>
+                            <source>target/generated-sources/jflex</source>
+                        </sourceDirs>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>test-compile</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>test-compile</goal>
+                    </goals>
+                    <configuration>
+                        <sourceDirs>
+                            <source>src/test/java</source>
+                            <source>target/generated-test-sources/test-annotations</source>
+                        </sourceDirs>
+                    </configuration>
+                </execution>
+            </executions>
+            <configuration>
+                <jvmTarget>1.8</jvmTarget>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>default-compile</id>
+                    <phase>none</phase>
+                </execution>
+                <execution>
+                    <id>default-testCompile</id>
+                    <phase>none</phase>
+                </execution>
+                <execution>
+                    <id>compile</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>testCompile</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
