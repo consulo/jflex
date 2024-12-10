@@ -33,11 +33,11 @@ public class HiLowEmitter extends PackEmitter {
   @Override
   public void emitUnpack() {
     // close last string chunk:
-    println("\";");
+    println("\"\"\"");
     nl();
     println("  private fun zzUnpack" + name + "(): IntArray {");
     println("    val result: IntArray = intArrayOf(" + numEntries + ");");
-    println("    val offset: Int = 0;");
+    println("    var offset: Int = 0;");
 
     for (int i = 0; i < chunks; i++) {
       println(
@@ -56,12 +56,12 @@ public class HiLowEmitter extends PackEmitter {
     nl();
     println(
         "  private fun zzUnpack" + name + "(packed: String, offset: Int, result: IntArray): Int {");
-    println("    val i: Int = 0;  /* index in packed string  */");
-    println("    val j: Int = offset;  /* index in unpacked array */");
-    println("    val l: Int = packed.length() - 1;");
+    println("    var i: Int = 0;  /* index in packed string  */");
+    println("    var j: Int = offset;  /* index in unpacked array */");
+    println("    var l: Int = packed.length - 1;");
     println("    while (i < l) {");
-    println("      val high: Int = packed.charAt(i++) << 16;");
-    println("      result[j++] = high | packed.charAt(i++);");
+    println("      val high: Int = packed[i++].code shl 16;");
+    println("      result[j++] = high or packed[i++].code;");
     println("    }");
     println("    return j;");
     println("  }");

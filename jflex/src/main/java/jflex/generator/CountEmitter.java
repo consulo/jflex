@@ -48,7 +48,7 @@ public class CountEmitter extends PackEmitter {
   @Override
   public void emitUnpack() {
     // close last string chunk:
-    println("\";");
+    println("\"\"\"");
 
     nl();
     println("  private fun zzUnpack" + name + "(): IntArray {");
@@ -86,10 +86,10 @@ public class CountEmitter extends PackEmitter {
             + "(packed: String , offset: Int, result: IntArray): Int {");
     println("    var i: Int = 0;       /* index in packed string  */");
     println("    var j: Int = offset;  /* index in unpacked array */");
-    println("    val l: Int = packed.length;");
+    println("    var l: Int = packed.length;");
     println("    while (i < l) {");
-    println("      var count: Int = packed[i++];");
-    println("      val value: Int = packed[i++];");
+    println("      var count: Int = packed[i++].code;");
+    println("      var value: Int = packed[i++].code;");
     if (translate == 1) {
       println("      value--;");
     } else if (translate != 0) {

@@ -114,17 +114,15 @@ public abstract class PackEmitter {
   public void breaks() {
     if (UTF8Length >= maxSize) {
       // close current chunk
-      out.append("\";");
+      out.append("\"\"\";");
       nl();
 
       nextChunk();
     } else {
       if (linepos >= maxEntries) {
         // line break
-        out.append("\"+");
         nl();
         out.append(indent);
-        out.append("\"");
         linepos = 0;
       }
     }
@@ -144,7 +142,9 @@ public abstract class PackEmitter {
     out.append(" =");
     nl();
     out.append(indent);
-    out.append("\"");
+    out.append("\"\"\"");
+    nl();
+    out.append(indent);
 
     UTF8Length = 0;
     linepos = 0;
@@ -157,19 +157,13 @@ public abstract class PackEmitter {
   }
 
   /**
-   * Append a unicode/octal escaped character to {@code out} buffer.
+   * Append a Unicode escaped character to {@code out} buffer.
    *
    * @param c the character to append
    */
   private void printUC(char c) {
-    if (c > 255) {
-      out.append("\\u");
-      if (c < 0x1000) out.append("0");
-      out.append(Integer.toHexString(c));
-    } else {
-      out.append("\\");
-      out.append(Integer.toOctalString(c));
-    }
+    out.append("\\u");
+    out.append(String.format("%04x", (int) c));
   }
 
   /**
