@@ -109,10 +109,16 @@ public final class KotlinEmitter {
   public static File normalize(String name, File input) {
     File outputFile;
 
-    if (Options.getDir() == null)
-      if (input == null || input.getParent() == null) outputFile = new File(name);
-      else outputFile = new File(input.getParent(), name);
-    else outputFile = new File(Options.getDir(), name);
+    if (Options.getDir() == null) {
+      if (input == null || input.getParent() == null) {
+          outputFile = new File(name);
+      } else {
+          outputFile = new File(input.getParent(), name);
+      }
+    }
+    else {
+        outputFile = new File(Options.getDir(), name);
+    }
 
     if (outputFile.exists() && !Options.no_backup) {
       File backup = new File(outputFile.toString() + "~");
@@ -122,9 +128,11 @@ public final class KotlinEmitter {
         backup.delete();
       }
 
-      if (outputFile.renameTo(backup))
-        Out.println("Old file \"" + outputFile + "\" saved as \"" + backup + "\"");
-      else Out.println("Couldn't save old file \"" + outputFile + "\", overwriting!");
+      if (outputFile.renameTo(backup)) {
+          Out.println("Old file \"" + outputFile + "\" saved as \"" + backup + "\"");
+      } else {
+          Out.println("Couldn't save old file \"" + outputFile + "\", overwriting!");
+      }
     }
 
     return outputFile;
@@ -153,11 +161,16 @@ public final class KotlinEmitter {
   private void print(int i, @SuppressWarnings("SameParameterValue") int tab) {
     int exp;
 
-    if (i < 0) exp = 1;
-    else exp = 10;
+    if (i < 0) {
+        exp = 1;
+    } else {
+        exp = 10;
+    }
 
     while (tab-- > 1) {
-      if (Math.abs(i) < exp) print(" ");
+      if (Math.abs(i) < exp) {
+          print(" ");
+      }
       exp *= 10;
     }
 
@@ -169,35 +182,44 @@ public final class KotlinEmitter {
   }
 
   private void emitLookBuffer() {
-    if (!hasGenLookAhead()) return;
+    if (!hasGenLookAhead()) {
+        return;
+    }
 
     println("  /** For the backwards DFA of general lookahead statements */");
     println(
-        "  private val zzFin: BooleanArray = BooleanArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())+1);");
+        "  private var zzFin: BooleanArray = BooleanArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())+1);");
     println();
   }
 
   private void emitScanError() {
-    if (scanner.scanErrorException() != null)
-      println("  @Throws(" + scanner.scanErrorException() + "::class)");
+    if (scanner.scanErrorException() != null) {
+        println("  @Throws(" + scanner.scanErrorException() + "::class)");
+    }
     print("  private fun zzScanError(errorCode: Int)");
 
     println(" {");
 
     skel.emitNext(); // 7
 
-    if (scanner.scanErrorException() == null) println("    throw Error(message);");
-    else println("    throw " + scanner.scanErrorException() + "(message);");
+    if (scanner.scanErrorException() == null) {
+        println("    throw Error(message);");
+    } else {
+        println("    throw " + scanner.scanErrorException() + "(message);");
+    }
     println("  }");
   }
 
   private void emitPushback() {
     skel.emitNext(); // 8
 
-    if (scanner.scanErrorException() != null)
-      println("  @Throws(" + scanner.scanErrorException + "::class)");
+    if (scanner.scanErrorException() != null) {
+        println("  @Throws(" + scanner.scanErrorException + "::class)");
+    }
     print("  " + visibility + " fun yypushback(number: Int) ");
-    if (scanner.scanErrorException() == null) println(" {");
+    if (scanner.scanErrorException() == null) {
+        println(" {");
+    }
 
     skel.emitNext(); // 9
   }
@@ -208,41 +230,61 @@ public final class KotlinEmitter {
     println("   * for debugging.");
     println("   */");
 
+    if (!scanner.lexThrow().isEmpty() || scanner.scanErrorException() != null) {
+      print("  @Throws(");
+
+      for (String thrown : scanner.lexThrow()) {
+        print(thrown);
+        print("::class, ");
+      }
+
+      if (scanner.scanErrorException() != null) {
+        print(scanner.scanErrorException());
+        print("::class, ");
+      }
+
+      println(")");
+    }
+
     if (scanner.cupCompatible() || scanner.cup2Compatible()) {
       // cup interface forces public method
       print("  public ");
     } else {
       print("  " + visibility + " ");
     }
-    if (scanner.tokenType() == null) {
-      if (scanner.isInteger()) print("int");
-      else if (scanner.isIntWrap()) print("Integer");
-      else print("Yytoken");
-    } else print(scanner.tokenType());
 
-    print(" debug_");
+    print("fun debug_");
 
     print(functionName);
 
-    print("() throws java.io.IOException");
+    print("()");
 
-    for (String thrown : scanner.lexThrow()) {
-      print("\n    , ");
-      print(thrown);
-    }
-
-    if (scanner.scanErrorException() != null) {
-      print(", ");
-      print(scanner.scanErrorException());
+    if (scanner.tokenType() == null) {
+      if (scanner.isInteger()) {
+          print(": Int?");
+      } else if (scanner.isIntWrap()) {
+          print(": Integer?");
+      } else {
+          print(": Yytoken?");
+      }
+    } else {
+        print(": " + scanner.tokenType() + "?");
     }
 
     println(" {");
 
-    println("    " + scanner.tokenType() + " s = " + functionName + "();");
-    print("    System.out.println( ");
-    if (scanner.lineCount()) print("\"line:\" + (yyline+1) + ");
-    if (scanner.columnCount()) print("\" col:\" + (yycolumn+1) + ");
-    if (scanner.charCount()) print("\" char:\" + yychar + ");
+    println("    var s:" + scanner.tokenType() + "? = " + functionName + "();");
+    println("    if (s == null) return null;");
+    print("   println( ");
+    if (scanner.lineCount()) {
+        print("\"line:\" + (yyline+1) + ");
+    }
+    if (scanner.columnCount()) {
+        print("\" col:\" + (yycolumn+1) + ");
+    }
+    if (scanner.charCount()) {
+        print("\" char:\" + yychar + ");
+    }
     println("\" --\"+ yytext() + \"--\" + getTokenName(s.sym) + \"--\");");
     println("    return s;");
     println("  }");
@@ -250,7 +292,9 @@ public final class KotlinEmitter {
   }
 
   private void emitMain(String functionName) {
-    if (!(scanner.standalone() || scanner.debugOption() || scanner.cupDebug())) return;
+    if (!(scanner.standalone() || scanner.debugOption() || scanner.cupDebug())) {
+        return;
+    }
 
     if (scanner.cupDebug()) {
       println("  /**");
@@ -262,10 +306,10 @@ public final class KotlinEmitter {
       println(
           "       var classFields: Array<java.lang.reflect.Field> = "
               + scanner.cupSymbol()
-              + ".class.getFields();");
+              + "::class.java.fields");
       println("      for (i in classFields.indices) {");
       println("        if (classFields[i].getInt(null) == token) {");
-      println("          return classFields[i].getName();");
+      println("          return classFields[i].name");
       println("        }");
       println("      }");
       println("    } catch (e: Exception) {");
@@ -275,6 +319,7 @@ public final class KotlinEmitter {
       println("    return \"UNKNOWN TOKEN\";");
       println("  }");
       println("");
+      //      emitTokenDebug(functionName);
     }
 
     if (scanner.standalone()) {
@@ -389,13 +434,13 @@ public final class KotlinEmitter {
     println("          }");
     println("          else if (zzAtEOF) {");
     println("            zzInput = YYEOF;");
-    println("            break zzForAction;");
+    println("            return@zzForAction;");
     println("          }");
     println("          else {");
     println("            // store back cached positions");
     println("            zzCurrentPos  = zzCurrentPosL;");
     println("            zzMarkedPos   = zzMarkedPosL;");
-    println("            val eof: Boolean = zzRefill();");
+    println("            var eof: Boolean = zzRefill();");
     println("            // get translated positions and possibly new buffer");
     println("            zzCurrentPosL  = zzCurrentPos;");
     println("            zzMarkedPosL   = zzMarkedPos;");
@@ -403,7 +448,7 @@ public final class KotlinEmitter {
     println("            zzEndReadL     = zzEndRead;");
     println("            if (eof) {");
     println("              zzInput = YYEOF;");
-    println("              break zzForAction;");
+    println("              return@zzForAction;");
     println("            }");
     println("            else {");
     println("              zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL, zzEndReadL);");
@@ -445,7 +490,9 @@ public final class KotlinEmitter {
       // TODO(#222) Actually fix the fall-through violations
       println("@SuppressWarnings(\"fallthrough\")");
     }
-    if (scanner.isAbstract()) print("abstract ");
+    if (scanner.isAbstract()) {
+        print("abstract ");
+    }
 
     print("class ");
     print(scanner.className());
@@ -467,7 +514,7 @@ public final class KotlinEmitter {
     for (String name : scanner.stateNames()) {
       int num = scanner.getStateNumber(name);
 
-      println("  " + visibility + " val " + name + ": Int = " + 2 * num);
+      println("  " + visibility + " var " + name + ": Int = " + 2 * num);
     }
 
     // can't quite get rid of the indirection, even for non-bol lex states:
@@ -480,7 +527,7 @@ public final class KotlinEmitter {
     println("   *                  at the beginning of a line");
     println("   * l is of the form l = 2*k, k a non negative integer");
     println("   */");
-    println("  private val ZZ_LEXSTATE: IntArray = intArrayOf(");
+    println("  private var ZZ_LEXSTATE: IntArray = intArrayOf(");
 
     int i, j = 0;
     print("    ");
@@ -643,13 +690,21 @@ public final class KotlinEmitter {
 
     int count = 1;
     int value = 0;
-    if (dfa.isFinal(0)) value = FINAL;
-    if (!isTransition[0]) value |= NOLOOK;
+    if (dfa.isFinal(0)) {
+        value = FINAL;
+    }
+    if (!isTransition[0]) {
+        value |= NOLOOK;
+    }
 
     for (int i = 1; i < dfa.numStates(); i++) {
       int attribute = 0;
-      if (dfa.isFinal(i)) attribute = FINAL;
-      if (!isTransition[i]) attribute |= NOLOOK;
+      if (dfa.isFinal(i)) {
+          attribute = FINAL;
+      }
+      if (!isTransition[i]) {
+          attribute |= NOLOOK;
+      }
 
       if (value == attribute) {
         count++;
@@ -708,14 +763,19 @@ public final class KotlinEmitter {
         "// WARNING: this is a default constructor for "
             + "debug/standalone only. Has no custom parameters or init code.";
 
-    if (!printCtorArgs) println(warn);
+    if (!printCtorArgs) {
+        println(warn);
+    }
 
     print("  ");
 
-    if (scanner.isPublic()) print("public ");
-    print(getBaseName(scanner.className()));
-    print("(java.io.Reader in");
-    if (printCtorArgs) emitCtorArgs();
+    if (scanner.isPublic()) {
+        print("constructor ");
+    }
+    print("(input: java.io.Reader");
+    if (printCtorArgs) {
+      emitCtorArgs();
+    }
     print(")");
 
     if (scanner.initThrow() != null && printCtorArgs) {
@@ -730,7 +790,7 @@ public final class KotlinEmitter {
       print(scanner.initCode());
     }
 
-    println("    this.zzReader = in;");
+    println("    this.zzReader = input;");
 
     println("  }");
     println();
@@ -744,14 +804,18 @@ public final class KotlinEmitter {
   }
 
   private void emitDoEOF() {
-    if (eofCode == null) return;
+    if (eofCode == null) {
+        return;
+    }
 
     println("  /**");
     println("   * Contains user EOF-code, which will be executed exactly once,");
     println("   * when the end of file is reached");
     println("   */");
 
-    if (eofThrow != null) println("  @Throws(" + eofThrow + "::class)");
+    if (eofThrow != null) {
+        println("  @Throws(" + eofThrow + "::class)");
+    }
     println("  private fun zzDoEOF() {");
 
     println("    if (!zzEOFDone) {");
@@ -787,7 +851,7 @@ public final class KotlinEmitter {
     } else {
       print("  " + visibility + " ");
 
-      print("fun ");
+      print("override fun ");
 
       print(functionName);
 
@@ -795,10 +859,11 @@ public final class KotlinEmitter {
     }
 
     if (scanner.tokenType() == null) {
-      if (scanner.isInteger()) print(": Int");
-      else if (scanner.isIntWrap()) print(": Integer");
-      else print(": Yytoken");
-    } else print(": " + scanner.tokenType());
+      if (scanner.isInteger()) {
+          print(": Int?");
+      } else if (scanner.isIntWrap()) print(": Integer?");
+      else print(": Yytoken?");
+    } else print(": " + scanner.tokenType() + "?");
 
     println("\n  {");
 
@@ -818,38 +883,39 @@ public final class KotlinEmitter {
     if (scanner.lineCount() || scanner.columnCount()) {
       println("      var zzR: Boolean = false;");
       println("      var zzCh: Int;");
-      println("      var zzCharCount: Int;");
-      println("      for (zzCurrentPosL = zzStartRead  ;");
-      println("           zzCurrentPosL < zzMarkedPosL ;");
-      println("           zzCurrentPosL += zzCharCount ) {");
+      println("      var zzCharCount: Int = 0");
+      println("      var zzCurrentPosL: Int = zzStartRead");
+      println("      while (zzCurrentPosL < zzMarkedPosL) {");
+      println("        zzCurrentPosL += zzCharCount");
       println("        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);");
       println("        zzCharCount = Character.charCount(zzCh);");
-      println("        switch (zzCh) {");
-      println("        case '\\u000B':  // fall through");
-      println("        case '\\u000C':  // fall through");
-      println("        case '\\u0085':  // fall through");
-      println("        case '\\u2028':  // fall through");
-      println("        case '\\u2029':");
+      println("        when (zzCh.toChar()) {");
+      println("         '\\u000B' -> {} // fall through");
+      println("         '\\u000C' -> {} // fall through");
+      println("         '\\u0085' -> {} // fall through");
+      println("         '\\u2028' -> {} // fall through");
+      println("         '\\u2029' -> {");
       if (scanner.lineCount()) println("          yyline++;");
       if (scanner.columnCount()) println("          yycolumn = 0;");
       println("          zzR = false;");
-      println("          break;");
-      println("        case '\\r':");
+      println("          }");
+      println("         '\\r' -> {");
       if (scanner.lineCount()) println("          yyline++;");
       if (scanner.columnCount()) println("          yycolumn = 0;");
       println("          zzR = true;");
-      println("          break;");
-      println("        case '\\n':");
+      println("          }");
+      println("         '\\n' -> {");
       println("          if (zzR)");
       println("            zzR = false;");
       println("          else {");
       if (scanner.lineCount()) println("            yyline++;");
       if (scanner.columnCount()) println("            yycolumn = 0;");
       println("          }");
-      println("          break;");
-      println("        default:");
+      println("          }");
+      println("        else -> {");
       println("          zzR = false;");
-      if (scanner.columnCount()) println("          yycolumn += zzCharCount;");
+      if (scanner.columnCount()) println("             yycolumn += zzCharCount;");
+      println("          }");
       println("        }");
       println("      }");
       println();
@@ -864,7 +930,7 @@ public final class KotlinEmitter {
         println("        else if (zzAtEOF)");
         println("          zzPeek = false;");
         println("        else {");
-        println("          boolean eof = zzRefill();");
+        println("          var eof: Boolean = zzRefill();");
         println("          zzEndReadL = zzEndRead;");
         println("          zzMarkedPosL = zzMarkedPos;");
         println("          zzBufferL = zzBuffer;");
@@ -883,22 +949,22 @@ public final class KotlinEmitter {
       // if match was empty, last value of zzAtBOL can be used
       // zzStartRead is always >= 0
       println("      if (zzMarkedPosL > zzStartRead) {");
-      println("        switch (zzBufferL[zzMarkedPosL-1]) {");
-      println("        case '\\n':");
-      println("        case '\\u000B':  // fall through");
-      println("        case '\\u000C':  // fall through");
-      println("        case '\\u0085':  // fall through");
-      println("        case '\\u2028':  // fall through");
-      println("        case '\\u2029':  // fall through");
+      println("        when (zzBufferL[zzMarkedPosL-1]) {");
+      println("         '\\n' -> {}");
+      println("         '\\u000B' -> {}  // fall through");
+      println("         '\\u000C' -> {}  // fall through");
+      println("         '\\u0085' -> {}  // fall through");
+      println("         '\\u2028' -> {}  // fall through");
+      println("         '\\u2029' -> {  // fall through");
       println("          zzAtBOL = true;");
-      println("          break;");
-      println("        case '\\r': ");
+      println("          }");
+      println("         '\\r' -> {");
       println("          if (zzMarkedPosL < zzEndReadL)");
       println("            zzAtBOL = zzBufferL[zzMarkedPosL] != '\\n';");
       println("          else if (zzAtEOF)");
       println("            zzAtBOL = false;");
       println("          else {");
-      println("            boolean eof = zzRefill();");
+      println("            var eof: Boolean = zzRefill();");
       println("            zzMarkedPosL = zzMarkedPos;");
       println("            zzEndReadL = zzEndRead;");
       println("            zzBufferL = zzBuffer;");
@@ -907,9 +973,10 @@ public final class KotlinEmitter {
       println("            else ");
       println("              zzAtBOL = zzBufferL[zzMarkedPosL] != '\\n';");
       println("          }");
-      println("          break;");
-      println("        default:");
-      println("          zzAtBOL = false;");
+      println("          }");
+      println("        else -> {");
+      println("            zzAtBOL = false;");
+      println("          }");
       println("        }");
       println("      }");
     }
@@ -928,8 +995,8 @@ public final class KotlinEmitter {
     }
 
     println("      // set up zzAction for empty match case:");
-    println("      val zzAttributes: Int = zzAttrL[zzState];");
-    println("      if ( (zzAttributes & 1) == 1 ) {");
+    println("      var zzAttributes: Int = zzAttrL[zzState];");
+    println("      if ( (zzAttributes and 1) == 1 ) {");
     println("        zzAction = zzState;");
     println("      }");
     println();
@@ -945,12 +1012,12 @@ public final class KotlinEmitter {
     if (parser.getCharClasses().getMaxCharCode() <= 0xFF) {
       println("    return ZZ_CMAP[input];");
     } else {
-      println("    val offset: Int = input and " + (CMapBlock.BLOCK_SIZE - 1) + ";");
+      println("    var offset: Int = input and " + (CMapBlock.BLOCK_SIZE - 1) + ";");
       println(
           "    return if(offset == input)"
               + " ZZ_CMAP_BLOCKS[offset]"
               + " else"
-              + " ZZ_CMAP_BLOCKS[ZZ_CMAP_TOP[input >> "
+              + " ZZ_CMAP_BLOCKS[ZZ_CMAP_TOP[input shr "
               + CMapBlock.BLOCK_BITS
               + "] or offset];");
     }
@@ -959,19 +1026,23 @@ public final class KotlinEmitter {
   }
 
   private void emitGetRowMapNext() {
-    println("          val zzNext: Int = zzTransL[ zzRowMapL[zzState] + zzCMap(zzInput) ];");
-    println("          if (zzNext == " + DFA.NO_TARGET + ") break zzForAction;");
+    println("          var zzNext: Int = zzTransL[ zzRowMapL[zzState] + zzCMap(zzInput) ];");
+    println("          if (zzNext == " + DFA.NO_TARGET + ") return@zzForAction;");
     println("          zzState = zzNext;");
     println();
 
     println("          zzAttributes = zzAttrL[zzState];");
 
-    println("          if ( (zzAttributes & " + FINAL + ") == " + FINAL + " ) {");
+    println("          if ( (zzAttributes and " + FINAL + ") == " + FINAL + " ) {");
 
     skel.emitNext(); // 15
 
     println(
-        "            if ( (zzAttributes & " + NOLOOK + ") == " + NOLOOK + " ) break zzForAction;");
+        "            if ( (zzAttributes and "
+            + NOLOOK
+            + ") == "
+            + NOLOOK
+            + " ) return@zzForAction;");
 
     skel.emitNext(); // 16
   }
@@ -1043,13 +1114,17 @@ public final class KotlinEmitter {
       if (value == newVal) {
         count++;
       } else {
-        if (count > 0) e.emit(count, value);
+        if (count > 0) {
+            e.emit(count, value);
+        }
         count = 1;
         value = newVal;
       }
     }
 
-    if (count > 0) e.emit(count, value);
+    if (count > 0) {
+        e.emit(count, value);
+    }
 
     e.emitUnpack();
     println(e.toString());
@@ -1069,18 +1144,18 @@ public final class KotlinEmitter {
     println("  }");
     println();
     println("  /**  Whether the scanner buffer can grow to accommodate a larger token. */");
-    println("  private val zzCanGrow(): Boolean {");
+    println("  private fun zzCanGrow(): Boolean {");
     if (limit == null) {
       println("    return true;");
     } else {
-      println("    return zzBuffer.length < " + limit + ";");
+      println("    return zzBuffer.size < " + limit + ";");
     }
     println("  }");
     println();
   }
 
   private void emitActions() {
-    println("        switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {");
+    println("        when (if (zzAction < 0) zzAction else ZZ_ACTION[zzAction]) {");
 
     int i = actionTable.size() + 1;
 
@@ -1088,7 +1163,7 @@ public final class KotlinEmitter {
       Action action = entry.getKey();
       int label = entry.getValue();
 
-      println("          case " + label + ":");
+      println("          " + label + " ->");
 
       if (action.lookAhead() == Action.Kind.FIXED_BASE) {
         println("            // lookahead expression with fixed base length");
@@ -1113,8 +1188,8 @@ public final class KotlinEmitter {
         println("            // general lookahead, find correct zzMarkedPos");
         println("            { int zzFState = " + dfa.entryState(action.getEntryState()) + ";");
         println("              int zzFPos = zzStartRead;");
-        println("              if (zzFin.length <= zzBufferL.length) {");
-        println("                zzFin = new boolean[zzBufferL.length+1];");
+        println("              if (zzFin.size <= zzBufferL.size) {");
+        println("                zzFin = new boolean[zzBufferL.size+1];");
         println("              }");
         println("              boolean zzFinL[] = zzFin;");
         println("              while (zzFState != -1 && zzFPos < zzMarkedPos) {");
@@ -1143,12 +1218,12 @@ public final class KotlinEmitter {
       }
 
       if (scanner.debugOption()) {
-        print("            System.out.println(");
+        print("            println(");
         if (scanner.lineCount()) print("\"line: \"+(yyline+1)+\" \"+");
         if (scanner.columnCount()) print("\"col: \"+(yycolumn+1)+\" \"+");
         if (scanner.charCount()) print("\"char: \"+yychar+\" \"+");
         println("\"match: --\"+zzToPrintable(yytext())+\"--\");");
-        print("            System.out.println(\"action [" + action.priority + "] { ");
+        print("            println(\"action [" + action.priority + "] { ");
         print(escapify(action.content));
         println(" }\");");
       }
@@ -1156,17 +1231,19 @@ public final class KotlinEmitter {
       println("            { " + action.content);
       println("            }");
       println("          // fall through");
-      println("          case " + (i++) + ": break;");
+      println("          " + (i++) + " -> break;");
     }
   }
 
   private void emitEOFVal() {
     EOFActions eofActions = parser.getEOFActions();
 
-    if (eofCode != null) println("            zzDoEOF();");
+    if (eofCode != null) {
+        println("            zzDoEOF();");
+    }
 
     if (eofActions.numActions() > 0) {
-      println("            switch (zzLexicalState) {");
+      println("            when (zzLexicalState) {");
 
       // pick a start value for break case labels.
       // must be larger than any value of a lex state:
@@ -1177,7 +1254,7 @@ public final class KotlinEmitter {
         Action action = eofActions.getAction(num);
 
         if (action != null) {
-          println("            case " + name + ": {");
+          println("            " + name + " -> {");
           if (scanner.debugOption()) {
             print("              println(");
             if (scanner.lineCount()) print("\"line: \"+(yyline+1)+\" \"+");
@@ -1190,11 +1267,11 @@ public final class KotlinEmitter {
           }
           println("              " + action.content);
           println("            }  // fall though");
-          println("            case " + (++last) + ": break;");
+          println("            " + (++last) + " -> break;");
         }
       }
 
-      println("            default:");
+      println("            else ->");
     }
 
     Action defaultAction = eofActions.getDefault();
@@ -1222,7 +1299,9 @@ public final class KotlinEmitter {
       println("        return YYEOF;");
     } else println("        return null;");
 
-    if (eofActions.numActions() > 0) println("        }");
+    if (eofActions.numActions() > 0) {
+        println("        }");
+    }
   }
 
   private void findActionStates() {
@@ -1324,32 +1403,32 @@ public final class KotlinEmitter {
     if (!scanner.lineCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private val yyline: Int;");
+    println("  private var yyline: Int = 0;");
     println();
     println(
         "  /** Number of characters from the last newline up to the start of the matched text. */");
     if (!scanner.columnCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private val yycolumn: Int;");
+    println("  private var yycolumn: Int = 0;");
     println();
     println("  /** Number of characters up to the start of the matched text. */");
     if (!scanner.charCount()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private val yychar: Long;");
+    println("  private var yychar: Long = 0;");
     println();
     println("  /** Whether the scanner is currently at the beginning of a line. */");
     if (!scanner.bolUsed()) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private val zzAtBOL: Boolean = true;");
+    println("  private var zzAtBOL: Boolean = false;");
     println();
     println("  /** Whether the user-EOF-code has already been executed. */");
     if (eofCode == null) {
       println("  @SuppressWarnings(\"unused\")");
     }
-    println("  private val zzEOFDone: Boolean;");
+    println("  private var zzEOFDone: Boolean = false;");
     println();
   }
 
@@ -1433,10 +1512,10 @@ public final class KotlinEmitter {
     // must be placed in companion object
     skel.emitNext(); // 1
 
-    println("  private val ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
+    println("  private var ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
 
     if (scanner.debugOption()) {
-      println("  private val ZZ_NL: String = System.getProperty(\"line.separator\")");
+      println("  private var ZZ_NL: String = System.getProperty(\"line.separator\")");
     }
 
     skel.emitNext(); // 2
