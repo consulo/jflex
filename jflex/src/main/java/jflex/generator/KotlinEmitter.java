@@ -111,13 +111,12 @@ public final class KotlinEmitter {
 
     if (Options.getDir() == null) {
       if (input == null || input.getParent() == null) {
-          outputFile = new File(name);
+        outputFile = new File(name);
       } else {
-          outputFile = new File(input.getParent(), name);
+        outputFile = new File(input.getParent(), name);
       }
-    }
-    else {
-        outputFile = new File(Options.getDir(), name);
+    } else {
+      outputFile = new File(Options.getDir(), name);
     }
 
     if (outputFile.exists() && !Options.no_backup) {
@@ -129,9 +128,9 @@ public final class KotlinEmitter {
       }
 
       if (outputFile.renameTo(backup)) {
-          Out.println("Old file \"" + outputFile + "\" saved as \"" + backup + "\"");
+        Out.println("Old file \"" + outputFile + "\" saved as \"" + backup + "\"");
       } else {
-          Out.println("Couldn't save old file \"" + outputFile + "\", overwriting!");
+        Out.println("Couldn't save old file \"" + outputFile + "\", overwriting!");
       }
     }
 
@@ -162,14 +161,14 @@ public final class KotlinEmitter {
     int exp;
 
     if (i < 0) {
-        exp = 1;
+      exp = 1;
     } else {
-        exp = 10;
+      exp = 10;
     }
 
     while (tab-- > 1) {
       if (Math.abs(i) < exp) {
-          print(" ");
+        print(" ");
       }
       exp *= 10;
     }
@@ -183,7 +182,7 @@ public final class KotlinEmitter {
 
   private void emitLookBuffer() {
     if (!hasGenLookAhead()) {
-        return;
+      return;
     }
 
     println("  /** For the backwards DFA of general lookahead statements */");
@@ -194,7 +193,7 @@ public final class KotlinEmitter {
 
   private void emitScanError() {
     if (scanner.scanErrorException() != null) {
-        println("  @Throws(" + scanner.scanErrorException() + "::class)");
+      println("  @Throws(" + scanner.scanErrorException() + "::class)");
     }
     print("  private fun zzScanError(errorCode: Int)");
 
@@ -203,9 +202,9 @@ public final class KotlinEmitter {
     skel.emitNext(); // 7
 
     if (scanner.scanErrorException() == null) {
-        println("    throw Error(message);");
+      println("    throw Error(message);");
     } else {
-        println("    throw " + scanner.scanErrorException() + "(message);");
+      println("    throw " + scanner.scanErrorException() + "(message);");
     }
     println("  }");
   }
@@ -214,11 +213,11 @@ public final class KotlinEmitter {
     skel.emitNext(); // 8
 
     if (scanner.scanErrorException() != null) {
-        println("  @Throws(" + scanner.scanErrorException + "::class)");
+      println("  @Throws(" + scanner.scanErrorException + "::class)");
     }
     print("  " + visibility + " fun yypushback(number: Int) ");
     if (scanner.scanErrorException() == null) {
-        println(" {");
+      println(" {");
     }
 
     skel.emitNext(); // 9
@@ -261,14 +260,14 @@ public final class KotlinEmitter {
 
     if (scanner.tokenType() == null) {
       if (scanner.isInteger()) {
-          print(": Int?");
+        print(": Int?");
       } else if (scanner.isIntWrap()) {
-          print(": Integer?");
+        print(": Integer?");
       } else {
-          print(": Yytoken?");
+        print(": Yytoken?");
       }
     } else {
-        print(": " + scanner.tokenType() + "?");
+      print(": " + scanner.tokenType() + "?");
     }
 
     println(" {");
@@ -277,13 +276,13 @@ public final class KotlinEmitter {
     println("    if (s == null) return null;");
     print("   println( ");
     if (scanner.lineCount()) {
-        print("\"line:\" + (yyline+1) + ");
+      print("\"line:\" + (yyline+1) + ");
     }
     if (scanner.columnCount()) {
-        print("\" col:\" + (yycolumn+1) + ");
+      print("\" col:\" + (yycolumn+1) + ");
     }
     if (scanner.charCount()) {
-        print("\" char:\" + yychar + ");
+      print("\" char:\" + yychar + ");
     }
     println("\" --\"+ yytext() + \"--\" + getTokenName(s.sym) + \"--\");");
     println("    return s;");
@@ -293,7 +292,7 @@ public final class KotlinEmitter {
 
   private void emitMain(String functionName) {
     if (!(scanner.standalone() || scanner.debugOption() || scanner.cupDebug())) {
-        return;
+      return;
     }
 
     if (scanner.cupDebug()) {
@@ -491,7 +490,7 @@ public final class KotlinEmitter {
       println("@SuppressWarnings(\"fallthrough\")");
     }
     if (scanner.isAbstract()) {
-        print("abstract ");
+      print("abstract ");
     }
 
     print("class ");
@@ -691,19 +690,19 @@ public final class KotlinEmitter {
     int count = 1;
     int value = 0;
     if (dfa.isFinal(0)) {
-        value = FINAL;
+      value = FINAL;
     }
     if (!isTransition[0]) {
-        value |= NOLOOK;
+      value |= NOLOOK;
     }
 
     for (int i = 1; i < dfa.numStates(); i++) {
       int attribute = 0;
       if (dfa.isFinal(i)) {
-          attribute = FINAL;
+        attribute = FINAL;
       }
       if (!isTransition[i]) {
-          attribute |= NOLOOK;
+        attribute |= NOLOOK;
       }
 
       if (value == attribute) {
@@ -764,13 +763,13 @@ public final class KotlinEmitter {
             + "debug/standalone only. Has no custom parameters or init code.";
 
     if (!printCtorArgs) {
-        println(warn);
+      println(warn);
     }
 
     print("  ");
 
     if (scanner.isPublic()) {
-        print("constructor ");
+      print("constructor ");
     }
     print("(input: java.io.Reader");
     if (printCtorArgs) {
@@ -805,7 +804,7 @@ public final class KotlinEmitter {
 
   private void emitDoEOF() {
     if (eofCode == null) {
-        return;
+      return;
     }
 
     println("  /**");
@@ -814,7 +813,7 @@ public final class KotlinEmitter {
     println("   */");
 
     if (eofThrow != null) {
-        println("  @Throws(" + eofThrow + "::class)");
+      println("  @Throws(" + eofThrow + "::class)");
     }
     println("  private fun zzDoEOF() {");
 
@@ -860,7 +859,7 @@ public final class KotlinEmitter {
 
     if (scanner.tokenType() == null) {
       if (scanner.isInteger()) {
-          print(": Int?");
+        print(": Int?");
       } else if (scanner.isIntWrap()) print(": Integer?");
       else print(": Yytoken?");
     } else print(": " + scanner.tokenType() + "?");
@@ -1115,7 +1114,7 @@ public final class KotlinEmitter {
         count++;
       } else {
         if (count > 0) {
-            e.emit(count, value);
+          e.emit(count, value);
         }
         count = 1;
         value = newVal;
@@ -1123,7 +1122,7 @@ public final class KotlinEmitter {
     }
 
     if (count > 0) {
-        e.emit(count, value);
+      e.emit(count, value);
     }
 
     e.emitUnpack();
@@ -1239,7 +1238,7 @@ public final class KotlinEmitter {
     EOFActions eofActions = parser.getEOFActions();
 
     if (eofCode != null) {
-        println("            zzDoEOF();");
+      println("            zzDoEOF();");
     }
 
     if (eofActions.numActions() > 0) {
@@ -1300,7 +1299,7 @@ public final class KotlinEmitter {
     } else println("        return null;");
 
     if (eofActions.numActions() > 0) {
-        println("        }");
+      println("        }");
     }
   }
 

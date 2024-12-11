@@ -44,7 +44,7 @@ public abstract class PackEmitter {
   // String constants are stored as UTF8 with 2 bytes length
   // field in class files. One Unicode char can be up to 3
   // UTF8 bytes. 64K max and two chars safety.
-  private static final int maxSize = 0xFFFF - 6;
+  private static final int maxSize = 0x0FFF - 6;
 
   /** indent for string lines */
   private static final String indent = "    ";
@@ -114,15 +114,17 @@ public abstract class PackEmitter {
   public void breaks() {
     if (UTF8Length >= maxSize) {
       // close current chunk
-      out.append("\"\"\";");
+      out.append("\";");
       nl();
 
       nextChunk();
     } else {
       if (linepos >= maxEntries) {
         // line break
+        out.append("\"+");
         nl();
         out.append(indent);
+        out.append("\"");
         linepos = 0;
       }
     }
@@ -142,9 +144,7 @@ public abstract class PackEmitter {
     out.append(" =");
     nl();
     out.append(indent);
-    out.append("\"\"\"");
-    nl();
-    out.append(indent);
+    out.append("\"");
 
     UTF8Length = 0;
     linepos = 0;

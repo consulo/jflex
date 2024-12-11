@@ -48,7 +48,7 @@ public class CountEmitter extends PackEmitter {
   @Override
   public void emitUnpack() {
     // close last string chunk:
-    println("\"\"\"");
+    println("\";");
 
     nl();
     println("  private fun zzUnpack" + name + "(): IntArray {");

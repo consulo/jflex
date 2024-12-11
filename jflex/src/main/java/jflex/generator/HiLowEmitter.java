@@ -33,7 +33,7 @@ public class HiLowEmitter extends PackEmitter {
   @Override
   public void emitUnpack() {
     // close last string chunk:
-    println("\"\"\"");
+    println("\";");
     nl();
     println("  private fun zzUnpack" + name + "(): IntArray {");
     println("    val result: IntArray = intArrayOf(" + numEntries + ");");
