@@ -36,7 +36,7 @@ public class HiLowEmitter extends PackEmitter {
     println("\";");
     nl();
     println("  private fun zzUnpack" + name + "(): IntArray {");
-    println("    val result: IntArray = intArrayOf(" + numEntries + ");");
+    println("    val result: IntArray = IntArray(" + numEntries + ");");
     println("    var offset: Int = 0;");
 
     for (int i = 0; i < chunks; i++) {
