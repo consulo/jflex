@@ -1,3 +1,40 @@
+
+companion object {
+  /** This character denotes the end of file. */
+  var YYEOF: Int = -1;
+
+  /** Initial size of the lookahead buffer. */
+--- private static final int ZZ_BUFFERSIZE = ...; L1
+
+  // Lexical states.
+---  lexical states, charmap L2
+
+  /** error code for "unknown internal scanner error". */
+  private var ZZ_UNKNOWN_ERROR: Int = 0;
+  /** error code for "could not match input". */
+  private var ZZ_NO_MATCH: Int = 1;
+  /** error code for "pushback value was too large". */
+  private var ZZ_PUSHBACK_2BIG: Int = 2;
+
+  /**
+   * error messages for {@link #ZZ_UNKNOWN_ERROR}, {@link #ZZ_NO_MATCH}, and
+   * {@link #ZZ_PUSHBACK_2BIG} respectively.
+   */
+  var ZZ_ERROR_MSG = arrayOf(
+    "Unknown internal scanner error",
+    "Error: could not match input",
+    "Error: pushback value was too large"
+  );
+
+--- isFinal list L3
+    var message: String = try {
+        ZZ_ERROR_MSG[errorCode];
+    } catch (e: ArrayIndexOutOfBoundsException ) {
+        ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
+    }
+
+--- throws clause L7
+}
   /** Input device. */
   private lateinit var zzReader: java.io.Reader
 
@@ -336,41 +373,4 @@
   }
 
 --- main L20
-
-companion object {
-  /** This character denotes the end of file. */
-  var YYEOF: Int = -1;
-
-  /** Initial size of the lookahead buffer. */
---- private static final int ZZ_BUFFERSIZE = ...; L1
-
-  // Lexical states.
----  lexical states, charmap L2
-
-  /** error code for "unknown internal scanner error". */
-  private var ZZ_UNKNOWN_ERROR: Int = 0;
-  /** error code for "could not match input". */
-  private var ZZ_NO_MATCH: Int = 1;
-  /** error code for "pushback value was too large". */
-  private var ZZ_PUSHBACK_2BIG: Int = 2;
-
-  /**
-   * error messages for {@link #ZZ_UNKNOWN_ERROR}, {@link #ZZ_NO_MATCH}, and
-   * {@link #ZZ_PUSHBACK_2BIG} respectively.
-   */
-  var ZZ_ERROR_MSG = arrayOf(
-    "Unknown internal scanner error",
-    "Error: could not match input",
-    "Error: pushback value was too large"
-  );
-
---- isFinal list L3
-    var message: String = try {
-        ZZ_ERROR_MSG[errorCode];
-    } catch (e: ArrayIndexOutOfBoundsException ) {
-        ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
-    }
-
---- throws clause L7
-}
 }

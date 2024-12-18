@@ -1444,6 +1444,41 @@ public final class KotlinEmitter {
     emitUserCode();
     emitClassName();
 
+    // must be placed in companion object
+    skel.emitNext(); // 1
+
+    println("  private var ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
+
+    if (scanner.debugOption()) {
+      println("  private var ZZ_NL: String = System.getProperty(\"line.separator\")");
+    }
+
+    skel.emitNext(); // 2
+
+    emitLexicalStates();
+
+    emitCharMapTables();
+
+    emitActionTable();
+
+    reduceRows();
+
+    emitRowMapArray();
+
+    emitDynamicInit();
+
+    skel.emitNext(); // 3
+
+    emitAttributes();
+
+    emitCMapAccess();
+
+    emitScanError();
+
+    emitMain(functionName);
+
+    // end of companion object
+
     skel.emitNext(); // 4
 
     emitLookBuffer();
@@ -1507,39 +1542,6 @@ public final class KotlinEmitter {
     skel.emitNext(); // 20
 
     emitTokenDebug(functionName);
-
-    // must be placed in companion object
-    skel.emitNext(); // 1
-
-    println("  private var ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
-
-    if (scanner.debugOption()) {
-      println("  private var ZZ_NL: String = System.getProperty(\"line.separator\")");
-    }
-
-    skel.emitNext(); // 2
-
-    emitLexicalStates();
-
-    emitCharMapTables();
-
-    emitActionTable();
-
-    reduceRows();
-
-    emitRowMapArray();
-
-    emitDynamicInit();
-
-    skel.emitNext(); // 3
-
-    emitAttributes();
-
-    emitCMapAccess();
-
-    emitScanError();
-
-    emitMain(functionName);
 
     // closing
     skel.emitNext(); // 21
