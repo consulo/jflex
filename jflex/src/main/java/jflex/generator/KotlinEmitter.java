@@ -889,11 +889,7 @@ public final class KotlinEmitter {
       println("        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);");
       println("        zzCharCount = Character.charCount(zzCh);");
       println("        when (zzCh.toChar()) {");
-      println("         '\\u000B' -> {} // fall through");
-      println("         '\\u000C' -> {} // fall through");
-      println("         '\\u0085' -> {} // fall through");
-      println("         '\\u2028' -> {} // fall through");
-      println("         '\\u2029' -> {");
+      println("         '\\u000B', '\\u000C', '\\u0085', '\\u2028', '\\u2029' -> {");
       if (scanner.lineCount()) println("          yyline++;");
       if (scanner.columnCount()) println("          yycolumn = 0;");
       println("          zzR = false;");
