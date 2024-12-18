@@ -884,7 +884,7 @@ public final class KotlinEmitter {
       println("      var zzCh: Int;");
       println("      var zzCharCount: Int = 0");
       println("      var zzCurrentPosL: Int = zzStartRead");
-      println("      while (zzCurrentPosL < zzMarkedPosL) {");
+      println("      while (zzCurrentPosL + zzCharCount < zzMarkedPosL) {");
       println("        zzCurrentPosL += zzCharCount");
       println("        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);");
       println("        zzCharCount = Character.charCount(zzCh);");
