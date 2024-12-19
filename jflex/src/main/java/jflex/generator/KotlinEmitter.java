@@ -847,18 +847,18 @@ public final class KotlinEmitter {
     }
 
     if (scanner.cupCompatible() || scanner.cup2Compatible()) {
-      print("  @Override");
+      print("  override");
       // force public, because we have to implement cup/cup2 interface
       print("  public ");
     } else {
       print("  " + visibility + " ");
-
-      print("override fun ");
-
-      print(functionName);
-
-      print("()");
     }
+
+    print("fun ");
+
+    print(functionName);
+
+    print("()");
 
     if (scanner.tokenType() == null) {
       if (scanner.isInteger()) {
