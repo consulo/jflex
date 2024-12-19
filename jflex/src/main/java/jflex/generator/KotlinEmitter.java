@@ -496,13 +496,16 @@ public final class KotlinEmitter {
     print("class ");
     print(scanner.className());
 
-    if (scanner.isExtending() != null) {
+    if (scanner.isExtending() != null || scanner.isImplementing() != null) {
       print(" : ");
+    }
+
+    if (scanner.isExtending() != null) {
       print(scanner.isExtending());
+      print(", ");
     }
 
     if (scanner.isImplementing() != null) {
-      print(", ");
       print(scanner.isImplementing());
     }
 
