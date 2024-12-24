@@ -318,7 +318,7 @@ public final class KotlinEmitter {
       println("    return \"UNKNOWN TOKEN\";");
       println("  }");
       println("");
-      //      emitTokenDebug(functionName);
+      emitTokenDebug(functionName);
     }
 
     if (scanner.standalone()) {
@@ -1539,8 +1539,6 @@ public final class KotlinEmitter {
     emitNoMatch();
 
     skel.emitNext(); // 20
-
-    emitTokenDebug(functionName);
 
     // closing
     skel.emitNext(); // 21
