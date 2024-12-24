@@ -236,7 +236,7 @@ DottedVersion =  [1-9][0-9]*(\.[0-9]+){0,2}
                                 if (tokenType == null)
                                   tokenType = "java_cup.runtime.Symbol";
                                 if (eofVal == null)
-                                  eofVal = "return new java_cup.runtime.Symbol("+cupSymbol+".EOF);";
+                                  eofVal = "return java_cup.runtime.Symbol("+cupSymbol+".EOF);";
                                 if (!Options.jlex) eofclose = true;
                               }
   "%cupsym"{WSP}+{QualIdent} {WSP}*  { cupSymbol = yytext().substring(8).trim();
