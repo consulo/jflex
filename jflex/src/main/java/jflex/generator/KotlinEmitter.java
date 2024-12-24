@@ -1269,13 +1269,12 @@ public final class KotlinEmitter {
         }
       }
 
-      println("            else ->");
+      println("            else -> {");
     }
 
     Action defaultAction = eofActions.getDefault();
 
     if (defaultAction != null) {
-      println("              {");
       if (scanner.debugOption()) {
         print("                println(");
         if (scanner.lineCount()) print("\"line: \"+(yyline+1)+\" \"+");
@@ -1287,8 +1286,7 @@ public final class KotlinEmitter {
         println(" }\");");
       }
       println("                " + defaultAction.content);
-      println("              }");
-    } else if (scanner.eofVal() != null) println("          { " + scanner.eofVal() + " }");
+    } else if (scanner.eofVal() != null) println(scanner.eofVal());
     else if (scanner.isInteger()) {
       if (scanner.tokenType() != null) {
         Out.error(ErrorMessages.INT_AND_TYPE);
@@ -1298,6 +1296,7 @@ public final class KotlinEmitter {
     } else println("        return null;");
 
     if (eofActions.numActions() > 0) {
+      println("              }");
       println("        }");
     }
   }
