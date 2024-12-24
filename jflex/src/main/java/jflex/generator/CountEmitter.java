@@ -71,6 +71,16 @@ public class CountEmitter extends PackEmitter {
     nl();
 
     emitUnpackChunk();
+
+    nl();
+
+    out.append("  private val ")
+        .append(constName())
+        .append(": IntArray = zzUnpack")
+        .append(name)
+        .append("()");
+
+    nl();
   }
 
   /**

@@ -80,13 +80,6 @@ public abstract class PackEmitter {
 
   /** Emit declaration of decoded member and open first chunk. */
   public void emitInit() {
-    out.append("  private val ");
-    out.append(constName());
-    out.append(": IntArray");
-    out.append(" = zzUnpack");
-    out.append(name);
-    out.append("();");
-    nl();
     nextChunk();
   }
 
@@ -135,7 +128,6 @@ public abstract class PackEmitter {
 
   /** emit next chunk */
   private void nextChunk() {
-    nl();
     out.append("  private val ");
     out.append(constName());
     out.append("_PACKED_");

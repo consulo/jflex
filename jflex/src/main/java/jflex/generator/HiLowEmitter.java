@@ -65,6 +65,16 @@ public class HiLowEmitter extends PackEmitter {
     println("    }");
     println("    return j;");
     println("  }");
+
+    nl();
+
+    out.append("  private val ")
+        .append(constName())
+        .append(": IntArray = zzUnpack")
+        .append(name)
+        .append("()");
+
+    nl();
   }
 
   /**
