@@ -1161,7 +1161,7 @@ public final class KotlinEmitter {
       Action action = entry.getKey();
       int label = entry.getValue();
 
-      println("          " + label + " ->");
+      println("          " + label + " -> {");
 
       if (action.lookAhead() == Action.Kind.FIXED_BASE) {
         println("            // lookahead expression with fixed base length");
@@ -1226,7 +1226,7 @@ public final class KotlinEmitter {
         println(" }\");");
       }
 
-      println("            { " + action.content);
+      println("            " + action.content);
       println("            }");
       println("          // fall through");
       println("          " + (i++) + " -> break;");
@@ -1491,14 +1491,15 @@ public final class KotlinEmitter {
 
     if (scanner.debugOption()) {
       println("");
-      println("  private static String zzToPrintable(String str) {");
-      println("    StringBuilder builder = new StringBuilder();");
-      println("    for (int n = 0 ; n < str.length() ; ) {");
-      println("      int ch = str.codePointAt(n);");
-      println("      int charCount = Character.charCount(ch);");
+      println("  private fun zzToPrintable(str: String): String {");
+      println("    val builder = StringBuilder();");
+      println("    var n = 0");
+      println("    while (n < str.length) {");
+      println("      var ch: Int = str.codePointAt(n);");
+      println("      var charCount: Int = Character.charCount(ch);");
       println("      n += charCount;");
       println("      if (ch > 31 && ch < 127) {");
-      println("        builder.append((char)ch);");
+      println("        builder.append(ch.toChar());");
       println("      } else if (charCount == 1) {");
       println("        builder.append(String.format(\"\\\\u%04X\", ch));");
       println("      } else {");
