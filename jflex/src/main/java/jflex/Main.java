@@ -198,6 +198,15 @@ public class Main {
         continue;
       }
 
+      if (Objects.equals(argv[i], "--output-mode") || Objects.equals(argv[i], "-output-mode")) {
+        if (++i >= argv.length) {
+          Out.error(ErrorMessages.NO_OUTPUT_MODE);
+          throw new GeneratorException();
+        }
+        OptionUtils.set_output_mode(argv[i]);
+        continue;
+      }
+
       if (Objects.equals(argv[i], "--uniprops")
           || Objects.equals(argv[i], "-uniprops")) { // $NON-NLS-1$ //$NON-NLS-2$
         if (++i >= argv.length) {

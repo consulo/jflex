@@ -107,7 +107,8 @@ public enum ErrorMessages {
   UNKNOWN_WARNING,
   NOT_A_WARNING_ID,
   UNICODE_TOO_LONG,
-  TOKEN_SIZE_LIMIT;
+  TOKEN_SIZE_LIMIT,
+  NO_OUTPUT_MODE;
 
   private static final Set<ErrorMessages> configurableWarnings =
       new HashSet<>(

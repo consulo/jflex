@@ -55,6 +55,8 @@ public class Options {
   public static boolean legacy_dot;
   /** The encoding to use for input and output files. */
   public static Charset encoding;
+  /** The language the emitted scanner is written in */
+  public static OutputMode output_mode;
 
   /** Prevent instantiation of static-only calss */
   // (to be changed to instances in thread-safety refactor)

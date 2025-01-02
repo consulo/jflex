@@ -7,10 +7,12 @@ package jflex.core;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import jflex.exceptions.GeneratorException;
 import jflex.l10n.ErrorMessages;
 import jflex.logging.Out;
 import jflex.option.Options;
+import jflex.option.OutputMode;
 import jflex.skeleton.Skeleton;
 
 public class OptionUtils {
@@ -41,7 +43,26 @@ public class OptionUtils {
     Options.dump = false;
     Options.legacy_dot = false;
     Options.encoding = Charset.defaultCharset();
+    Options.output_mode = OutputMode.JAVA;
     Skeleton.readDefault();
+  }
+
+  /** Set the programming language of the emitted scanner. */
+  public static void set_output_mode(String outputMode) {
+    switch (outputMode) {
+      case "java":
+        Options.output_mode = OutputMode.JAVA;
+        break;
+      case "kotlin":
+        Options.output_mode = OutputMode.KOTLIN;
+        break;
+      default:
+        Out.error(
+            "Unknown output mode: "
+                + outputMode
+                + ".\n Options are "
+                + Arrays.toString(OutputMode.values()));
+    }
   }
 
   /**
