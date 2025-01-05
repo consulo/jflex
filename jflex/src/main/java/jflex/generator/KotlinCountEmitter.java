@@ -11,7 +11,7 @@ package jflex.generator;
  * @author Gerwin Klein
  * @version JFlex 1.10.0-SNAPSHOT
  */
-public class CountEmitter extends PackEmitter {
+public class KotlinCountEmitter extends KotlinPackEmitter {
   /** number of entries in expanded array */
   protected int numEntries;
 
@@ -23,7 +23,7 @@ public class CountEmitter extends PackEmitter {
    *
    * @param name name of the generated array
    */
-  protected CountEmitter(String name) {
+  protected KotlinCountEmitter(String name) {
     this(name, 0);
   }
 
@@ -35,7 +35,7 @@ public class CountEmitter extends PackEmitter {
    * @param translate translate all values by this amount, e.g provide +1 to allow values in [-1,
    *     0xFFFE]
    */
-  protected CountEmitter(String name, int translate) {
+  protected KotlinCountEmitter(String name, int translate) {
     super(name);
     this.translate = translate;
   }
@@ -43,7 +43,7 @@ public class CountEmitter extends PackEmitter {
   /**
    * Emits count/value unpacking code for the generated array.
    *
-   * @see PackEmitter#emitUnpack()
+   * @see KotlinPackEmitter#emitUnpack()
    */
   @Override
   public void emitUnpack() {
@@ -51,9 +51,9 @@ public class CountEmitter extends PackEmitter {
     println("\";");
 
     nl();
-    println("  private static int [] zzUnpack" + name + "() {");
-    println("    int [] result = new int[" + numEntries + "];");
-    println("    int offset = 0;");
+    println("  private fun zzUnpack" + name + "(): IntArray {");
+    println("    val result: IntArray = IntArray(" + numEntries + ");");
+    println("    var offset: Int = 0;");
 
     for (int i = 0; i < chunks; i++) {
       println(
@@ -71,6 +71,16 @@ public class CountEmitter extends PackEmitter {
     nl();
 
     emitUnpackChunk();
+
+    nl();
+
+    out.append("  private val ")
+        .append(constName())
+        .append(": IntArray = zzUnpack")
+        .append(name)
+        .append("()");
+
+    nl();
   }
 
   /**
@@ -81,19 +91,23 @@ public class CountEmitter extends PackEmitter {
    */
   protected void emitUnpackChunk() {
     println(
-        "  private static int zzUnpack" + name + "(String packed, int offset, int [] result) {");
-    println("    int i = 0;       /* index in packed string  */");
-    println("    int j = offset;  /* index in unpacked array */");
-    println("    int l = packed.length();");
+        "  private fun zzUnpack"
+            + name
+            + "(packed: String , offset: Int, result: IntArray): Int {");
+    println("    var i: Int = 0;       /* index in packed string  */");
+    println("    var j: Int = offset;  /* index in unpacked array */");
+    println("    var l: Int = packed.length;");
     println("    while (i < l) {");
-    println("      int count = packed.charAt(i++);");
-    println("      int value = packed.charAt(i++);");
+    println("      var count: Int = packed[i++].code;");
+    println("      var value: Int = packed[i++].code;");
     if (translate == 1) {
       println("      value--;");
     } else if (translate != 0) {
       println("      value-= " + translate);
     }
-    println("      do result[j++] = value; while (--count > 0);");
+    println("      do");
+    println("          result[j++] = value");
+    println("      while (--count > 0)");
     println("    }");
     println("    return j;");
     println("  }");
@@ -153,11 +167,11 @@ public class CountEmitter extends PackEmitter {
     emit(count, value);
   }
 
-  public static CountEmitter emitter(int states, int translation, String name) {
+  public static KotlinCountEmitter emitter(int states, int translation, String name) {
     if (states <= 0xFFFF) {
-      return new CountEmitter(name, translation);
+      return new KotlinCountEmitter(name, translation);
     } else {
-      return new HiCountEmitter(name, translation);
+      return new KotlinHiCountEmitter(name, translation);
     }
   }
 }

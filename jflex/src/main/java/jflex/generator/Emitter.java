@@ -35,7 +35,7 @@ import jflex.skeleton.Skeleton;
  * @author Gerwin Klein
  * @version JFlex 1.10.0-SNAPSHOT
  */
-public final class Emitter {
+public final class Emitter extends IEmitter {
   // bit masks for state attributes
   private static final int FINAL = 1;
   private static final int NOLOOK = 8;

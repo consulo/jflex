@@ -73,7 +73,7 @@ public class LexGenerator {
 
       if (Options.dump) Out.dump(ErrorMessages.get(ErrorMessages.NFA_IS) + Out.NL + nfa + Out.NL);
 
-      if (Options.dot) nfa.writeDot(KotlinEmitter.normalize("nfa.dot", null)); // $NON-NLS-1$
+      if (Options.dot) nfa.writeDot(Emitter.normalize("nfa.dot", null)); // $NON-NLS-1$
 
       Out.println(ErrorMessages.NFA_STATES, nfa.numStates());
 
@@ -86,7 +86,7 @@ public class LexGenerator {
 
       if (Options.dump) Out.dump(ErrorMessages.get(ErrorMessages.DFA_IS) + Out.NL + dfa + Out.NL);
 
-      if (Options.dot) dfa.writeDot(KotlinEmitter.normalize("dfa-big.dot", null)); // $NON-NLS-1$
+      if (Options.dot) dfa.writeDot(Emitter.normalize("dfa-big.dot", null)); // $NON-NLS-1$
 
       Out.checkErrors();
 
@@ -103,11 +103,11 @@ public class LexGenerator {
 
       if (Options.dump) Out.dump(ErrorMessages.get(ErrorMessages.MIN_DFA_IS) + Out.NL + dfa);
 
-      if (Options.dot) dfa.writeDot(KotlinEmitter.normalize("dfa-min.dot", null)); // $NON-NLS-1$
+      if (Options.dot) dfa.writeDot(Emitter.normalize("dfa-min.dot", null)); // $NON-NLS-1$
 
       time.start();
 
-      KotlinEmitter emitter = Emitters.createFileEmitter(inputFile, parser, dfa);
+      IEmitter emitter = Emitters.createFileEmitter(inputFile, parser, dfa);
       emitter.emit();
 
       time.stop();

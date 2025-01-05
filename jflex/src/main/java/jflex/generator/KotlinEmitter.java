@@ -31,13 +31,12 @@ import jflex.skeleton.Skeleton;
  * @author Gerwin Klein
  * @version JFlex 1.10.0-SNAPSHOT
  */
-public final class KotlinEmitter {
+public final class KotlinEmitter extends IEmitter {
   // bit masks for state attributes
   private static final int FINAL = 1;
   private static final int NOLOOK = 8;
 
   private final File inputFile;
-  final String outputFileName;
 
   private final PrintWriter out;
   private final Skeleton skel;
@@ -559,7 +558,7 @@ public final class KotlinEmitter {
     println("   */");
 
     // allow values from -1 (translate +1), get emitter capacity based on number of states
-    CountEmitter e = CountEmitter.emitter(dfa.numStates(), +1, "trans");
+    KotlinCountEmitter e = KotlinCountEmitter.emitter(dfa.numStates(), +1, "trans");
     e.emitInit();
 
     for (int i = 0; i < dfa.numStates(); i++) {
@@ -648,7 +647,7 @@ public final class KotlinEmitter {
       println("  /**");
       println("   * Top-level table for translating characters to character classes");
       println("   */");
-      CountEmitter e = new CountEmitter("cmap_top");
+      KotlinCountEmitter e = new KotlinCountEmitter("cmap_top");
       e.emitInit();
       e.emitCountValueString(tables.fst);
       e.emitUnpack();
@@ -658,7 +657,7 @@ public final class KotlinEmitter {
       println("  /**");
       println("   * Second-level tables for translating characters to character classes");
       println("   */");
-      e = new CountEmitter("cmap_blocks");
+      e = new KotlinCountEmitter("cmap_blocks");
       e.emitInit();
       e.emitCountValueString(tables.snd);
       e.emitUnpack();
@@ -672,7 +671,7 @@ public final class KotlinEmitter {
     println("   * Translates a state to a row index in the transition table");
     println("   */");
 
-    HiLowEmitter e = new HiLowEmitter("RowMap");
+    KotlinHiLowEmitter e = new KotlinHiLowEmitter("RowMap");
     e.emitInit();
     for (int i = 0; i < dfa.numStates(); i++) {
       e.emit(rowMap[i] * numCols);
@@ -682,12 +681,12 @@ public final class KotlinEmitter {
   }
 
   private void emitAttributes() {
-    // TODO(lsf): refactor to use CountEmitter.emitCountValueString
+    // TODO(lsf): refactor to use KotlinCountEmitter.emitCountValueString
     println("  /**");
     println("   * ZZ_ATTRIBUTE[aState] contains the attributes of state {@code aState}");
     println("   */");
 
-    CountEmitter e = new CountEmitter("Attribute");
+    KotlinCountEmitter e = new KotlinCountEmitter("Attribute");
     e.emitInit();
 
     int count = 1;
@@ -1092,7 +1091,7 @@ public final class KotlinEmitter {
     println("  /**");
     println("   * Translates DFA states to action switch labels.");
     println("   */");
-    CountEmitter e = new CountEmitter("Action");
+    KotlinCountEmitter e = new KotlinCountEmitter("Action");
     e.emitInit();
 
     for (int i = 0; i < dfa.numStates(); i++) {
