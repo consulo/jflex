@@ -44,7 +44,7 @@ public abstract class PackEmitter {
   // String constants are stored as UTF8 with 2 bytes length
   // field in class files. One Unicode char can be up to 3
   // UTF8 bytes. 64K max and two chars safety.
-  private static final int maxSize = 0x0FFF - 6;
+  private static final int maxSize = 0xFFFF - 6;
 
   /** indent for string lines */
   private static final String indent = "    ";
@@ -80,6 +80,12 @@ public abstract class PackEmitter {
 
   /** Emit declaration of decoded member and open first chunk. */
   public void emitInit() {
+    out.append("  private static final int [] ");
+    out.append(constName());
+    out.append(" = zzUnpack");
+    out.append(name);
+    out.append("();");
+    nl();
     nextChunk();
   }
 
@@ -128,11 +134,11 @@ public abstract class PackEmitter {
 
   /** emit next chunk */
   private void nextChunk() {
-    out.append("  private val ");
+    nl();
+    out.append("  private static final String ");
     out.append(constName());
     out.append("_PACKED_");
     out.append(chunks);
-    out.append(": String ");
     out.append(" =");
     nl();
     out.append(indent);
@@ -149,13 +155,19 @@ public abstract class PackEmitter {
   }
 
   /**
-   * Append a Unicode escaped character to {@code out} buffer.
+   * Append a unicode/octal escaped character to {@code out} buffer.
    *
    * @param c the character to append
    */
   private void printUC(char c) {
-    out.append("\\u");
-    out.append(String.format("%04x", (int) c));
+    if (c > 255) {
+      out.append("\\u");
+      if (c < 0x1000) out.append("0");
+      out.append(Integer.toHexString(c));
+    } else {
+      out.append("\\");
+      out.append(Integer.toOctalString(c));
+    }
   }
 
   /**
