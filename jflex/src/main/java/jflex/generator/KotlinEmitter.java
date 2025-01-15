@@ -317,7 +317,6 @@ public final class KotlinEmitter extends IEmitter {
       println("    return \"UNKNOWN TOKEN\";");
       println("  }");
       println("");
-      emitTokenDebug(functionName);
     }
 
     if (scanner.standalone()) {
@@ -853,7 +852,7 @@ public final class KotlinEmitter extends IEmitter {
       print("  " + visibility + " ");
     }
 
-    print("fun ");
+    print("override fun ");
 
     print(functionName);
 
@@ -1174,11 +1173,10 @@ public final class KotlinEmitter extends IEmitter {
       if (action.lookAhead() == Action.Kind.FIXED_LOOK
           || action.lookAhead() == Action.Kind.FINITE_CHOICE) {
         println("            // lookahead expression with fixed lookahead length");
-        println("            zzMarkedPos = Character.offsetByCodePoints");
         println(
-            "                (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -"
+            "            zzMarkedPos = Character.offsetByCodePoints(zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -"
                 + action.getLookLength()
-                + ");");
+                + ")");
       }
 
       if (action.lookAhead() == Action.Kind.GENERAL_LOOK) {
@@ -1477,6 +1475,8 @@ public final class KotlinEmitter extends IEmitter {
     // end of companion object
 
     skel.emitNext(); // 4
+
+    emitTokenDebug(functionName);
 
     emitLookBuffer();
 
