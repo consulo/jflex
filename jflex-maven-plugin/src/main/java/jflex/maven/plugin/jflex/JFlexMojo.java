@@ -22,6 +22,7 @@ import java.util.Set;
 import jflex.core.OptionUtils;
 import jflex.generator.LexGenerator;
 import jflex.option.Options;
+import jflex.option.OutputMode;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -119,6 +120,9 @@ public class JFlexMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "")
   private String encodingName = ""; // NOPMD
+
+  @Parameter(defaultValue = "KOTLIN")
+  private OutputMode output_mode = OutputMode.KOTLIN;
 
   /**
    * Generate java parsers from lexer definition files.
@@ -227,6 +231,7 @@ public class JFlexMojo extends AbstractMojo {
 
     Options.no_minimize = !minimize; // NOPMD
     Options.no_backup = !backup; // NOPMD
+    Options.output_mode = output_mode;
     if (!Objects.equals("pack", generationMethod)) {
       throw new MojoExecutionException("Illegal generation method: " + generationMethod);
     }
