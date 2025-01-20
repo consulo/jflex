@@ -1181,20 +1181,20 @@ public final class KotlinEmitter extends IEmitter {
 
       if (action.lookAhead() == Action.Kind.GENERAL_LOOK) {
         println("            // general lookahead, find correct zzMarkedPos");
-        println("            { int zzFState = " + dfa.entryState(action.getEntryState()) + ";");
-        println("              int zzFPos = zzStartRead;");
+        println("            { var zzFState = " + dfa.entryState(action.getEntryState()) + ";");
+        println("              var zzFPos = zzStartRead;");
         println("              if (zzFin.size <= zzBufferL.size) {");
-        println("                zzFin = new boolean[zzBufferL.size+1];");
+        println("                zzFin = BooleanArray(zzBufferL.size+1);");
         println("              }");
-        println("              boolean zzFinL[] = zzFin;");
+        println("              var zzFinL = zzFin;");
         println("              while (zzFState != -1 && zzFPos < zzMarkedPos) {");
-        println("                zzFinL[zzFPos] = ((zzAttrL[zzFState] & 1) == 1);");
+        println("                zzFinL[zzFPos] = ((zzAttrL[zzFState] and 1) == 1);");
         println("                zzInput = Character.codePointAt(zzBufferL, zzFPos, zzMarkedPos);");
         println("                zzFPos += Character.charCount(zzInput);");
         println("                zzFState = zzTransL[ zzRowMapL[zzFState] + zzCMap(zzInput) ];");
         println("              }");
         println("              if (zzFState != -1) {");
-        println("                zzFinL[zzFPos++] = ((zzAttrL[zzFState] & 1) == 1);");
+        println("                zzFinL[zzFPos++] = ((zzAttrL[zzFState] and 1) == 1);");
         println("              }");
         println("              while (zzFPos <= zzMarkedPos) {");
         println("                zzFinL[zzFPos++] = false;");
@@ -1202,7 +1202,7 @@ public final class KotlinEmitter extends IEmitter {
         println();
         println("              zzFState = " + dfa.entryState(action.getEntryState() + 1) + ";");
         println("              zzFPos = zzMarkedPos;");
-        println("              while (!zzFinL[zzFPos] || (zzAttrL[zzFState] & 1) != 1) {");
+        println("              while (!zzFinL[zzFPos] || (zzAttrL[zzFState] and 1) != 1) {");
         println(
             "                zzInput = Character.codePointBefore(zzBufferL, zzFPos, zzStartRead);");
         println("                zzFPos -= Character.charCount(zzInput);");
