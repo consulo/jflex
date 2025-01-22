@@ -18,7 +18,7 @@ package jflex.benchmark;
 %int
 
 %{
-  private int matches;
+  private var matches = 0;
 %}
 
 SHORT = "a"

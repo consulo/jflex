@@ -21,10 +21,10 @@ import java.util.*;
 %state DESCR JFLEXCMD JAVAC_FILES LINELIST VERSION
 
 %{
-  private StringBuilder buffer = new StringBuilder();
-  private TestCase test = new TestCase();
-  private List<String> cmdLine;
-  private List<Integer> lineList;
+  private var buffer = StringBuilder()
+  private var test = TestCase()
+  private lateinit var cmdLine: MutableList<String>
+  private lateinit var lineList: MutableList<Int>
 %}
 
 NL = \r | \n | \r\n
@@ -37,13 +37,13 @@ DIGIT = [0-9]
 
   "description:"      { yybegin(DESCR); }
 
-  "jflex: "           { cmdLine = new ArrayList<String>(); yybegin(JFLEXCMD); }
-  "javac-files: "     { cmdLine = new ArrayList<String>(); yybegin(JAVAC_FILES); }
+  "jflex: "           { cmdLine = ArrayList<String>(); yybegin(JFLEXCMD); }
+  "javac-files: "     { cmdLine = ArrayList<String>(); yybegin(JAVAC_FILES); }
 
   "jflex-fail:" " "+ "true"  { test.setExpectJFlexFail(true); }
   "jflex-fail:" " "+ "false" { test.setExpectJFlexFail(false); }
 
-  "jflex-diff:" " "+  { lineList = new ArrayList<Integer>();
+  "jflex-diff:" " "+  { lineList = ArrayList<Int>();
                         test.setJFlexDiff(lineList);
                         yybegin(LINELIST);
                       }
@@ -98,4 +98,4 @@ DIGIT = [0-9]
 
 <<EOF>>               { return test; }
 
-[^]   { throw new LoadException("Illegal character: ["+yytext()+"]"); }
+[^]   { throw LoadException("Illegal character: ["+yytext()+"]"); }
