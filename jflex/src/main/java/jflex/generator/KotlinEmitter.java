@@ -843,7 +843,7 @@ public final class KotlinEmitter extends IEmitter {
     if (scanner.cupCompatible()
         || scanner.cup2Compatible()
         || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")) {
-      print("  override");
+      print("  override ");
     } else {
       print("  " + visibility + " ");
     }
