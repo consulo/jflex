@@ -767,12 +767,7 @@ public final class KotlinEmitter extends IEmitter {
       println(warn);
     }
 
-    print("  ");
-
-    if (scanner.isPublic()) {
-      print("constructor ");
-    }
-    print("(input: java.io.Reader");
+    print("  constructor (input: java.io.Reader");
     if (printCtorArgs) {
       emitCtorArgs();
     }
