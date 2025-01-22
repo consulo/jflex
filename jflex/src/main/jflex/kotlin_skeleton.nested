@@ -410,6 +410,7 @@ companion object {
 
     while (true) {
       // cached fields:
+      var zzCurrentPosL = 0
       var zzMarkedPosL: Int = zzMarkedPos;
       var zzEndReadL: Int = zzEndRead;
       var zzBufferL: CharArray = zzBuffer;
