@@ -847,7 +847,7 @@ public final class KotlinEmitter extends IEmitter {
       print("  " + visibility + " ");
     }
 
-    print("override fun ");
+    print("fun ");
 
     print(functionName);
 
@@ -1471,7 +1471,9 @@ public final class KotlinEmitter extends IEmitter {
 
     skel.emitNext(); // 4
 
-    emitTokenDebug(functionName);
+    if (scanner.cupDebug()) {
+      emitTokenDebug(functionName);
+    }
 
     emitLookBuffer();
 
