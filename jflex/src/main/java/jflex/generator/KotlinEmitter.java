@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import jflex.base.Build;
 import jflex.base.Pair;
 import jflex.core.*;
@@ -592,7 +593,7 @@ public final class KotlinEmitter extends IEmitter {
     println("  /**");
     println("   * Translates characters to character classes");
     println("   */");
-    println("  private static final char [] ZZ_CMAP = {");
+    println("  private var ZZ_CMAP = intArrayOf(");
 
     int n = 0; // numbers of entries in current line
     print("    ");
@@ -614,7 +615,7 @@ public final class KotlinEmitter extends IEmitter {
     }
 
     println();
-    println("  };");
+    println("  );");
     println();
   }
 
@@ -768,16 +769,15 @@ public final class KotlinEmitter extends IEmitter {
       println(warn);
     }
 
+    if (scanner.initThrow() != null && printCtorArgs) {
+      println("  @Throws(" + scanner.initThrow() + "::class)");
+    }
+
     print("  constructor (input: java.io.Reader");
     if (printCtorArgs) {
       emitCtorArgs();
     }
     print(")");
-
-    if (scanner.initThrow() != null && printCtorArgs) {
-      print(" throws ");
-      print(scanner.initThrow());
-    }
 
     println(" {");
 
@@ -840,10 +840,10 @@ public final class KotlinEmitter extends IEmitter {
       println(")");
     }
 
-    if (scanner.cupCompatible() || scanner.cup2Compatible()) {
+    if (scanner.cupCompatible()
+        || scanner.cup2Compatible()
+        || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")) {
       print("  override");
-      // force public, because we have to implement cup/cup2 interface
-      print("  public ");
     } else {
       print("  " + visibility + " ");
     }
@@ -880,7 +880,7 @@ public final class KotlinEmitter extends IEmitter {
       println("      var zzR: Boolean = false;");
       println("      var zzCh: Int;");
       println("      var zzCharCount: Int = 0");
-      println("      var zzCurrentPosL: Int = zzStartRead");
+      println("      zzCurrentPosL = zzStartRead");
       println("      while (zzCurrentPosL + zzCharCount < zzMarkedPosL) {");
       println("        zzCurrentPosL += zzCharCount");
       println("        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);");
