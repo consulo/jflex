@@ -31,7 +31,7 @@ companion object {
 --- throws clause L7
 }
   /** the input device */
-  private lateinit var zzReader: java.io.Reader;
+  private lateinit var zzReader: kotlinx.io.Source;
 
   /** the current state of the DFA */
   private var zzState = 0;
@@ -78,7 +78,7 @@ companion object {
    * input streams
    */
   private final class ZzFlexStreamInfo (
-    var zzReader: java.io.Reader,
+    var zzReader: kotlinx.io.Source,
     var zzEndRead: Int,
     var zzStartRead: Int,
     var zzCurrentPos: Int,
@@ -137,9 +137,17 @@ companion object {
 
     /* fill the buffer with new input */
     var requested: Int = zzBuffer.size - zzEndRead;
-    var numRead: Int = zzReader.read(zzBuffer, zzEndRead, requested);
+    var numRead = 0
+    for (i in 0..<requested) {
+      if (zzReader.exhausted()) {
+        numRead = -1
+        break
+      }
+      zzBuffer[zzEndRead + i] = zzReader.readCodePointValue().toChar()
+      numRead++
+    }
 
-    /* not supposed to occur according to specification of java.io.Reader */
+    /* not supposed to occur according to specification of kotlinx.io.Source */
     if (numRead == 0) {
       if (requested == 0) {
         throw java.io.EOFException("Scan buffer limit reached [" + zzBuffer.size + "]");
@@ -156,7 +164,7 @@ companion object {
           --zzEndRead;
           zzFinalHighSurrogate = 1;
         } else {          // There is room in the buffer for at least one more char
-          var c: Int = zzReader.read();  // Expecting to read a paired low surrogate char
+          var c: Int = zzReader.readInt();  // Expecting to read a paired low surrogate char
           if (c == -1) {
             return true;
           } else {
@@ -200,7 +208,7 @@ companion object {
    *
    * @see #yypopStream()
    */
-  fun yypushStream(reader: java.io.Reader) {
+  fun yypushStream(reader: kotlinx.io.Source) {
     zzStreams.push(
         ZzFlexStreamInfo(zzReader, zzEndRead, zzStartRead, zzCurrentPos,
             zzMarkedPos, yyline, yychar, yycolumn, zzBuffer, zzAtBOL, zzAtEOF, zzEOFDone,
@@ -222,7 +230,7 @@ companion object {
    * @throws java.io.IOException
    *         if there was an error in closing the stream.
    *
-   * @see #yypushStream(java.io.Reader)
+   * @see #yypushStream(kotlinx.io.Source)
    */
   @Throws(java.io.IOException::class)
   fun yypopStream() {
@@ -265,10 +273,10 @@ companion object {
    *
    * @param reader   the new input stream
    *
-   * @see #yypushStream(java.io.Reader)
+   * @see #yypushStream(kotlinx.io.Source)
    * @see #yypopStream()
    */
-  fun yyreset(reader: java.io.Reader) {
+  fun yyreset(reader: kotlinx.io.Source) {
     zzReader = reader;
     zzEOFDone = false;
     yyResetPosition();

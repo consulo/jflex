@@ -366,12 +366,10 @@ public final class KotlinEmitter extends IEmitter {
     println("      }");
     println("      for (i in firstFilePos..<argv.size) {");
     println("        var scanner: " + className + "? = null");
-    println("        var stream: java.io.FileInputStream? = null");
-    println("        var reader: java.io.Reader? = null");
+    println("        var stream: kotlinx.io.Source? = null");
     println("        try {");
-    println("          stream = java.io.FileInputStream(argv[i]);");
-    println("          reader = java.io.InputStreamReader(stream, encodingName);");
-    println("          scanner = " + className + "(reader);");
+    println("          stream = SystemFileSystem.source(Path(argv[i])).buffered()");
+    println("          scanner = " + className + "(stream);");
     if (scanner.standalone()) {
       println("          while ( !scanner.zzAtEOF ) scanner." + functionName + "();");
     } else if (scanner.cupDebug()) {
@@ -396,15 +394,6 @@ public final class KotlinEmitter extends IEmitter {
     println("          e.printStackTrace();");
     println("        }");
     println("        finally {");
-    println("          if (reader != null) {");
-    println("            try {");
-    println("              reader.close();");
-    println("            }");
-    println("            catch (e: java.io.IOException) {");
-    println("              println(\"IO error closing file \\\"\"+argv[i]+\"\\\"\");");
-    println("              println(e);");
-    println("            }");
-    println("          }");
     println("          if (stream != null) {");
     println("            try {");
     println("              stream.close();");
@@ -773,7 +762,7 @@ public final class KotlinEmitter extends IEmitter {
       println("  @Throws(" + scanner.initThrow() + "::class)");
     }
 
-    print("  constructor (input: java.io.Reader");
+    print("  constructor (input: kotlinx.io.Source");
     if (printCtorArgs) {
       emitCtorArgs();
     }

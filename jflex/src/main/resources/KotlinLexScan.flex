@@ -16,13 +16,16 @@ import jflex.option.Options;
 import jflex.performance.Timer;
 import jflex.scanner.ScannerException;
 import jflex.skeleton.Skeleton;
+import kotlinx.io.*;
+import kotlinx.io.files.SystemFileSystem;
+import kotlinx.io.files.Path;
 
 %%
 
 %final
 %public
 %class MyScan
-%extends AbstractLexScan
+%extends KotlinAbstractLexScan
 %implements java_cup.runtime.Scanner
 %function next_token
 
@@ -82,9 +85,9 @@ import jflex.skeleton.Skeleton;
 
   @Throws(IOException::class)
   @Override
-  protected override fun lexPushStream(f: File) {
+  protected override fun lexPushStream(f: Path) {
     // yypushStream in skeleton.nested
-    yypushStream(Files.newBufferedReader(f.toPath(), Options.encoding));
+    yypushStream(SystemFileSystem.source(f).buffered()) // TODO: add encoding
   }
 %}
 

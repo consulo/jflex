@@ -1,0 +1,20 @@
+#! /bin/bash
+cd /home/Codrin.Ogreanu/IdeaProjects/jflex/jflex/ || exit
+pwd
+
+BINARY=target/jflex-full-1.10.0-SNAPSHOT.jar
+
+#SKELETON=src/main/resources/jflex/skeleton_kotlin.default
+SKELETON=src/main/jflex/kotlin_skeleton.nested
+#SKELETON=src/main/resources/jflex/skeleton.default
+#SKELETON=src/main/jflex/skeleton.nested
+
+FLEX=src/main/resources/KotlinLexScan.flex
+#FLEX=src/main/jflex/LexScan.flex
+
+java -jar $BINARY --output-mode kotlin --skel $SKELETON $FLEX
+
+mv ${FLEX%/*}/MyScan.* src/main/java/jflex/core/
+#echo ${SKELETON%/*}
+
+
