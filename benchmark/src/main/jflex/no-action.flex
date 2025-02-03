@@ -5,6 +5,8 @@
 
 package jflex.benchmark;
 
+import kotlinx.io.readCodePointValue;
+
 /*
   A scanner with minimal action code, to measure inner matching loop
   performance.

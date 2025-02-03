@@ -6,6 +6,7 @@
 package jflex.maven.plugin.testsuite;
 
 import java.util.*;
+import kotlinx.io.readCodePointValue;
 
 %%
 
