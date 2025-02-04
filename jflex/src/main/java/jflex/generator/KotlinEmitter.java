@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import jflex.base.Build;
 import jflex.base.Pair;
 import jflex.core.*;
@@ -416,7 +415,8 @@ public final class KotlinEmitter extends IEmitter {
 
   private void emitNextInput() {
     println("          if (zzCurrentPosL < zzEndReadL) {");
-    println("            zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL, zzEndReadL);");
+    println(
+        "            zzInput = Character.codePointAt(zzBufferL.toString().toCharArray(), zzCurrentPosL, zzEndReadL);");
     println("            zzCurrentPosL += Character.charCount(zzInput);");
     println("          }");
     println("          else if (zzAtEOF) {");
@@ -438,7 +438,8 @@ public final class KotlinEmitter extends IEmitter {
     println("              return@zzForAction;");
     println("            }");
     println("            else {");
-    println("              zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL, zzEndReadL);");
+    println(
+        "              zzInput = Character.codePointAt(zzBufferL.toString().toCharArray(), zzCurrentPosL, zzEndReadL);");
     println("              zzCurrentPosL += Character.charCount(zzInput);");
     println("            }");
     println("          }");
@@ -476,7 +477,7 @@ public final class KotlinEmitter extends IEmitter {
   private void emitClassName() {
     if (!scanner.noSuppressWarnings()) {
       // TODO(#222) Actually fix the fall-through violations
-      println("@SuppressWarnings(\"fallthrough\")");
+      //      println("@SuppressWarnings(\"fallthrough\")");
     }
     if (scanner.isAbstract()) {
       print("abstract ");
@@ -813,9 +814,9 @@ public final class KotlinEmitter extends IEmitter {
   }
 
   private void emitLexFunctHeader(String functionName) {
-    if (!scanner.lexThrow().isEmpty() || scanner.scanErrorException() != null) {
-      print("  @Throws(");
+    print("  @Throws(IOException::class, ");
 
+    if (!scanner.lexThrow().isEmpty() || scanner.scanErrorException() != null) {
       for (String thrown : scanner.lexThrow()) {
         print(thrown);
         print("::class, ");
@@ -825,19 +826,19 @@ public final class KotlinEmitter extends IEmitter {
         print(scanner.scanErrorException());
         print("::class, ");
       }
-
-      println(")");
     }
+    println(")");
 
-    if (scanner.cupCompatible()
-        || scanner.cup2Compatible()
-        || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")) {
-      print("  override ");
-    } else {
-      print("  " + visibility + " ");
-    }
+    // TODO: add more checks to see if method overrides anything
+    //    if (scanner.cupCompatible()
+    //        || scanner.cup2Compatible()
+    //        || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")) {
+    //      print("  override ");
+    //    } else {
+    //      print("  " + visibility + " ");
+    //    }
 
-    print("fun ");
+    print("override fun ");
 
     print(functionName);
 
