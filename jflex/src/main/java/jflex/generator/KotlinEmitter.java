@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import jflex.base.Build;
 import jflex.base.Pair;
 import jflex.core.*;
@@ -829,16 +830,16 @@ public final class KotlinEmitter extends IEmitter {
     }
     println(")");
 
-    // TODO: add more checks to see if method overrides anything
-    //    if (scanner.cupCompatible()
-    //        || scanner.cup2Compatible()
-    //        || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")) {
-    //      print("  override ");
-    //    } else {
-    //      print("  " + visibility + " ");
-    //    }
+    if (scanner.cupCompatible()
+        || scanner.cup2Compatible()
+        || Objects.equals(scanner.isImplementing(), "java_cup.runtime.Scanner")
+        || functionName.equals("advance")) {
+      print("  override ");
+    } else {
+      print("  " + visibility + " ");
+    }
 
-    print("override fun ");
+    print("fun ");
 
     print(functionName);
 
