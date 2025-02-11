@@ -32,12 +32,12 @@ import jflex.logging.Out;
  *
  * @see jflex.generator.Emitter
  * @author Gerwin Klein
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.1
  */
 public class Skeleton {
 
   /** location of default skeleton */
-  private static final String DEFAULT_LOC = "jflex/skeleton.default";
+  private static final String DEFAULT_LOC = "jflex/idea-flex.skeleton";
 
   /** expected number of sections in the skeleton file */
   private static final int size = 21;

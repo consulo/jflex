@@ -7,9 +7,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jflex</artifactId>
   <parent>
-    <groupId>de.jflex</groupId>
+    <groupId>org.jetbrains.intellij.deps.jflex</groupId>
     <artifactId>jflex-parent</artifactId>
-    <version>1.10.0-SNAPSHOT</version>
+    <version>1.10.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>JFlex</name>
@@ -144,7 +144,7 @@
         <groupId>de.jflex</groupId>
         <artifactId>jflex-maven-plugin</artifactId>
         <!-- bootstrap with previous version -->
-        <version>1.9.1</version>
+        <version>1.9.0</version>
         <executions>
           <execution>
             <?m2e execute onConfiguration,onIncremental?>
@@ -210,7 +210,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>${project.artifactId}-full-${project.version}</finalName>
               <artifactSet>
                 <includes>
                   <include>com.github.vbmacher:java-cup-runtime</include>
@@ -322,7 +321,7 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>de.jflex</groupId>
+                    <groupId>org.jetbrains.intellij.deps.jflex</groupId>
                     <artifactId>jflex-maven-plugin</artifactId>
                     <versionRange>[1.6.0,)</versionRange>
                     <goals>
