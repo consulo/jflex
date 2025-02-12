@@ -1173,7 +1173,7 @@ public final class KotlinEmitter extends IEmitter {
         println("            // general lookahead, find correct zzMarkedPos");
         println("            { var zzFState = " + dfa.entryState(action.getEntryState()) + ";");
         println("              var zzFPos = zzStartRead;");
-        println("              if (zzFin.length <= zzBufferL.size) {");
+        println("              if (zzFin.size <= zzBufferL.size) {");
         println("                zzFin = BooleanArray(zzBufferL.size+1);");
         println("              }");
         println("              var zzFinL = zzFin;");
