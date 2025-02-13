@@ -15,7 +15,7 @@ import org.junit.Test;
  * Some unit tests for the jflex Emitter class
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.1
+ * @version JFlex 1.10.2
  */
 public class EmitterTest {
   @Test
