@@ -17,7 +17,7 @@ import java.util.List;
  * Generator for random {@link StateSet} instances.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.3
+ * @version JFlex 1.10.4
  * @see StateSet
  */
 public class StateSetGen extends Generator<StateSet> {

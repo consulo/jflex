@@ -15,7 +15,7 @@ import jflex.core.unicode.CharClasses;
  * Generator for random {@link Interval} instances.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.3
+ * @version JFlex 1.10.4
  * @see Interval
  */
 public class IntervalGen extends Generator<Interval> {
