@@ -55,7 +55,7 @@ __STYLESHEET__
 
 my $snapshot = get_snapshot_version();
 (my $release = $snapshot) =~ s/-SNAPSHOT//;
-my $branch = "branch-$release";
+my $branch = "intellij/$release";
 
 select STDOUT;
 $| = 1; # Turn on auto-flush
