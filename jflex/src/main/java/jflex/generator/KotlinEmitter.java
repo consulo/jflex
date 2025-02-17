@@ -416,7 +416,7 @@ public final class KotlinEmitter extends IEmitter {
   private void emitNextInput() {
     println("          if (zzCurrentPosL < zzEndReadL) {");
     println(
-        "            zzInput = Character.codePointAt(zzBufferL.toString().toCharArray(), zzCurrentPosL);");
+        "            zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL);");
     println("            zzCurrentPosL += Character.charCount(zzInput);");
     println("          }");
     println("          else if (zzAtEOF) {");
@@ -438,8 +438,7 @@ public final class KotlinEmitter extends IEmitter {
     println("              return@zzForAction;");
     println("            }");
     println("            else {");
-    println(
-        "              zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL);");
+    println("              zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL);");
     println("              zzCurrentPosL += Character.charCount(zzInput);");
     println("            }");
     println("          }");
