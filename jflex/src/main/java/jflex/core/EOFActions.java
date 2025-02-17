@@ -13,7 +13,7 @@ import java.util.Map;
  * A simple table to store EOF actions for each lexical state.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.2
+ * @version JFlex 1.10.3
  */
 public class EOFActions {
 

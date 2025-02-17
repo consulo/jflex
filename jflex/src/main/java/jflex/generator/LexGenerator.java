@@ -30,7 +30,7 @@ import jflex.scanner.ScannerException;
  *
  * @author Gerwin Klein
  * @author Régis Décamps
- * @version JFlex 1.10.2
+ * @version JFlex 1.10.3
  */
 public class LexGenerator {
 

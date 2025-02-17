@@ -15,7 +15,7 @@ import org.junit.Test;
  * Unit tests for {@link jflex.core.RegExp}.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.2
+ * @version JFlex 1.10.3
  */
 public class RegExpTest {
 
