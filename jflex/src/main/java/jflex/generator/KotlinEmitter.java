@@ -439,7 +439,7 @@ public final class KotlinEmitter extends IEmitter {
     println("            }");
     println("            else {");
     println(
-        "              zzInput = Character.codePointAt(zzBufferL.toString().toCharArray(), zzCurrentPosL);");
+        "              zzInput = Character.codePointAt(zzBufferL, zzCurrentPosL);");
     println("              zzCurrentPosL += Character.charCount(zzInput);");
     println("            }");
     println("          }");
