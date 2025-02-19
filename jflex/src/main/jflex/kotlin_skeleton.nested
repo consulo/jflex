@@ -71,7 +71,7 @@ companion object {
   private var zzFinalHighSurrogate = 0;
 
   /** the stack of open (nested) input streams to read from */
-  private var zzStreams = java.util.ArrayDeque<ZzFlexStreamInfo>();
+  private var zzStreams = ArrayDeque<ZzFlexStreamInfo>();
 
   /**
    * inner class used to store info for nested
@@ -103,20 +103,16 @@ companion object {
    *
    * @return      <code>false</code>, iff there was new input.
    *
-   * @exception   java.io.IOException  if any I/O-Error occurs
+   * @exception   kotlinx.io.IOException  if any I/O-Error occurs
    */
-  @Throws(java.io.IOException::class)
+  @Throws(kotlinx.io.IOException::class)
   private fun zzRefill(): Boolean {
 
     /* first: make room (if you can) */
     if (zzStartRead > 0) {
       zzEndRead += zzFinalHighSurrogate;
       zzFinalHighSurrogate = 0;
-      System.arraycopy(
-        zzBuffer, zzStartRead,
-        zzBuffer, 0,
-        zzEndRead - zzStartRead
-      );
+      zzBuffer.copyInto(zzBuffer, 0, zzStartRead, zzEndRead)
 
       /* translate stored positions */
       zzEndRead -= zzStartRead;
@@ -129,7 +125,7 @@ companion object {
     if (zzCurrentPos >= zzBuffer.size - zzFinalHighSurrogate && zzCanGrow()) {
       /* if not, and it can grow: blow it up */
       var newBuffer: CharArray = CharArray(Math.min(zzBuffer.size * 2, zzMaxBufferLen()));
-      System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.size);
+      zzBuffer.copyInto(newBuffer, 0, 0, zzBuffer.size)
       zzBuffer = newBuffer;
       zzEndRead += zzFinalHighSurrogate;
       zzFinalHighSurrogate = 0;
@@ -152,7 +148,7 @@ companion object {
       if (requested == 0) {
         throw java.io.EOFException("Scan buffer limit reached [" + zzBuffer.size + "]");
       } else {
-        throw java.io.IOException(
+        throw kotlinx.io.IOException(
           "Reader returned 0 characters. See JFlex examples/zero-reader for a workaround."
         );
       }
@@ -183,9 +179,9 @@ companion object {
   /**
    * Closes the input reader.
    *
-   * @throws java.io.IOException if the reader could not be closed.
+   * @throws kotlinx.io.IOException if the reader could not be closed.
    */
-  @Throws(java.io.IOException::class)
+  @Throws(kotlinx.io.IOException::class)
   fun yyclose() {
     zzAtEOF = true; // indicate end of file
     zzEndRead = zzStartRead; // invalidate buffer
@@ -209,7 +205,7 @@ companion object {
    * @see #yypopStream()
    */
   fun yypushStream(reader: kotlinx.io.Source) {
-    zzStreams.push(
+    zzStreams.addFirst(
         ZzFlexStreamInfo(zzReader, zzEndRead, zzStartRead, zzCurrentPos,
             zzMarkedPos, yyline, yychar, yycolumn, zzBuffer, zzAtBOL, zzAtEOF, zzEOFDone,
             zzFinalHighSurrogate)
@@ -227,15 +223,15 @@ companion object {
    * @throws java.util.NoSuchElementException
    *         if there is no further stream to read from.
    *
-   * @throws java.io.IOException
+   * @throws kotlinx.io.IOException
    *         if there was an error in closing the stream.
    *
    * @see #yypushStream(kotlinx.io.Source)
    */
-  @Throws(java.io.IOException::class)
+  @Throws(kotlinx.io.IOException::class)
   fun yypopStream() {
     zzReader.close();
-    var s: ZzFlexStreamInfo  = zzStreams.pop();
+    var s: ZzFlexStreamInfo  = zzStreams.removeFirst();
     zzBuffer      = s.zzBuffer;
     zzReader      = s.zzReader;
     zzEndRead     = s.zzEndRead;
@@ -368,6 +364,26 @@ companion object {
     return zzMarkedPos - zzStartRead;
   }
 
+  /**
+   * Implementation of the `codePointAt` method of `java.lang.Character` for CharSequences
+   *
+   * @param index the index of the character for which to retrieve the code point.
+   * @return the Unicode code point at the specified index.
+   * @throws IndexOutOfBoundsException if the index is outside the bounds of the character sequence.
+   */
+  fun CharSequence.codePoint(index: Int): Int {
+      if (index < 0 || index >= length) throw IndexOutOfBoundsException("Index: $index, Size: $length")
+      val high = this[index]
+      if (high.isHighSurrogate() && index + 1 < length) {
+          val low = this[index + 1]
+          if (low.isLowSurrogate()) {
+              val codePoint: String = "$high$low"
+              return codePoint.codePointAt(0)
+          }
+      }
+      return high.code
+  }
+
 
   /**
    * Reports an error that occured while scanning.
@@ -408,7 +424,7 @@ companion object {
    * the end of input is encountered or an I/O-Error occurs.
    *
    * @return      the next token
-   * @exception   java.io.IOException  if any I/O-Error occurs
+   * @exception   kotlinx.io.IOException  if any I/O-Error occurs
    */
 --- yylex declaration L10
     var zzInput: Int = 0;

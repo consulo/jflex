@@ -48,7 +48,7 @@ public class OptionUtils {
   }
 
   /** Set the programming language of the emitted scanner. */
-  public static void set_output_mode(String outputMode) {
+  public static void setOutputMode(String outputMode) {
     switch (outputMode) {
       case "java":
         Options.output_mode = OutputMode.JAVA;

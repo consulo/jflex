@@ -67,7 +67,7 @@ DIGIT = [0-9]
 
 
 <VERSION> {
-  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext().toString()); yybegin(YYINITIAL); }
+  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext()); yybegin(YYINITIAL); }
 }
 
 <DESCR> {

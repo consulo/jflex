@@ -24,6 +24,11 @@ import jflex.scanner.ScannerException;
 import kotlinx.io.*;
 import kotlinx.io.files.Path;
 
+/**
+ * A variant of{@link AbstractLexScan} that is used when generating Kotlin lexers. The only
+ * differences are in `lexPushStream` and `includeFile`, as Kotlin lexers expect IO to be performed
+ * using kotlinx.io primitives.
+ */
 public abstract class KotlinAbstractLexScan implements ILexScan {
 
   public enum CharSetSize {

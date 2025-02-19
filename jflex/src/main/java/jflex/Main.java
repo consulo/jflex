@@ -203,7 +203,7 @@ public class Main {
           Out.error(ErrorMessages.NO_OUTPUT_MODE);
           throw new GeneratorException();
         }
-        OptionUtils.set_output_mode(argv[i]);
+        OptionUtils.setOutputMode(argv[i]);
         continue;
       }
 
