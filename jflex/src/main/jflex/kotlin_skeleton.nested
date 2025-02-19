@@ -41,7 +41,7 @@ companion object {
 
   /** this buffer contains the current text to be matched and is
       the source of the yytext() string */
-  private var zzBuffer: CharArray = CharArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen()));
+  private var zzBuffer: CharArray = CharArray(kotlin.math.min(ZZ_BUFFERSIZE, zzMaxBufferLen()));
 
   /** the textposition at the last accepting state */
   private var zzMarkedPos = 0;
@@ -124,7 +124,7 @@ companion object {
     /* is the buffer big enough? */
     if (zzCurrentPos >= zzBuffer.size - zzFinalHighSurrogate && zzCanGrow()) {
       /* if not, and it can grow: blow it up */
-      var newBuffer: CharArray = CharArray(Math.min(zzBuffer.size * 2, zzMaxBufferLen()));
+      var newBuffer: CharArray = CharArray(kotlin.math.min(zzBuffer.size * 2, zzMaxBufferLen()));
       zzBuffer.copyInto(newBuffer, 0, 0, zzBuffer.size)
       zzBuffer = newBuffer;
       zzEndRead += zzFinalHighSurrogate;
@@ -146,7 +146,7 @@ companion object {
     /* not supposed to occur according to specification of kotlinx.io.Source */
     if (numRead == 0) {
       if (requested == 0) {
-        throw java.io.EOFException("Scan buffer limit reached [" + zzBuffer.size + "]");
+        throw kotlinx.io.EOFException("Scan buffer limit reached [" + zzBuffer.size + "]");
       } else {
         throw kotlinx.io.IOException(
           "Reader returned 0 characters. See JFlex examples/zero-reader for a workaround."
@@ -155,7 +155,7 @@ companion object {
     }
     if (numRead > 0) {
       zzEndRead += numRead;
-      if (Character.isHighSurrogate(zzBuffer[zzEndRead - 1])) {
+      if (zzBuffer[zzEndRead - 1]).isHighSurrogate() {
         if (numRead == requested) { // We requested too few chars to encode a full Unicode character
           --zzEndRead;
           zzFinalHighSurrogate = 1;
@@ -210,7 +210,7 @@ companion object {
             zzMarkedPos, yyline, yychar, yycolumn, zzBuffer, zzAtBOL, zzAtEOF, zzEOFDone,
             zzFinalHighSurrogate)
     );
-    zzBuffer = CharArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen()));
+    zzBuffer = CharArray(kotlin.math.min(ZZ_BUFFERSIZE, zzMaxBufferLen()));
     zzReader = reader;
     yyResetPosition();
   }
@@ -277,7 +277,7 @@ companion object {
     zzEOFDone = false;
     yyResetPosition();
     zzLexicalState = YYINITIAL;
-    var initBufferSize: Int = Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen());
+    var initBufferSize: Int = kotlin.math.min(ZZ_BUFFERSIZE, zzMaxBufferLen());
     if (zzBuffer.size > initBufferSize) {
       zzBuffer = CharArray(initBufferSize);
     }

@@ -36,9 +36,9 @@ public class KotlinHiCountEmitter extends KotlinCountEmitter {
     println("    int j = offset;  /* index in unpacked array */");
     println("    int l = packed.length() - 2; /* reading 3 chars per entry */");
     println("    while (i < l) {");
-    println("      int count = packed.charAt(i++);");
-    println("      int high = packed.charAt(i++) << 16;");
-    println("      int value = high | packed.charAt(i++);");
+    println("      int count = packed.get(i++);");
+    println("      int high = packed.get(i++) << 16;");
+    println("      int value = high | packed.get(i++);");
     if (translate == 1) {
       println("      value--;");
     } else if (translate != 0) {
