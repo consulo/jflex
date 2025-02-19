@@ -209,7 +209,7 @@ public final class KotlinEmitter extends IEmitter {
   }
 
   private void emitBitSet() {
-    println("internal class Bitset {");
+    println("private class Bitset {");
     println("  private var bitset = LongArray(0)");
     println("");
     println("  internal fun add(i: Int) {");
@@ -1506,11 +1506,11 @@ public final class KotlinEmitter extends IEmitter {
 
     if (scanner.debugOption()) {
       println("");
-      println("  private fun zzToPrintable(str: String): String {");
+      println("  private fun zzToPrintable(str: CharSequence): String {");
       println("    val builder = StringBuilder();");
       println("    var n = 0");
       println("    while (n < str.length) {");
-      println("      var ch: Int = str.codePointAt(n);");
+      println("      var ch: Int = str.codePoint(n);");
       println("      var charCount: Int = Character.charCount(ch);");
       println("      n += charCount;");
       println("      if (ch > 31 && ch < 127) {");
