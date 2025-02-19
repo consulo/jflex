@@ -5,15 +5,12 @@
 
 package jflex.maven.plugin.testsuite;
 
-import static kotlinx.io.files.FileSystemJvmKt.SystemFileSystem;
-
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import kotlinx.io.CoreKt;
-import kotlinx.io.files.Path;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -95,8 +92,7 @@ public class TestsuiteUtils {
         // set path to test
         File currentDir = new File(test.getParent());
         // trying to load
-        TestLoader loader =
-            new TestLoader(CoreKt.buffered(SystemFileSystem.source(new Path(test))));
+        TestLoader loader = new TestLoader(new FileReader(test));
         TestCase currentTest = loader.load();
         currentTest.init(currentDir);
 

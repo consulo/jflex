@@ -87,7 +87,6 @@ public class JFlexMojo extends AbstractMojo {
   private boolean dot;
 
   /** Use external skeleton file. */
-  @Parameter(defaultValue = "${project.parent.basedir}/jflex/src/main/jflex/kotlin_skeleton.nested")
   private File skeleton;
 
   /** Strict JLex compatibility. */
@@ -122,8 +121,8 @@ public class JFlexMojo extends AbstractMojo {
   @Parameter(defaultValue = "")
   private String encodingName = ""; // NOPMD
 
-  @Parameter(defaultValue = "KOTLIN")
-  private OutputMode output_mode = OutputMode.KOTLIN;
+  @Parameter(defaultValue = "JAVA")
+  private OutputMode output_mode = OutputMode.JAVA;
 
   /**
    * Generate java parsers from lexer definition files.

@@ -110,6 +110,6 @@ public class JFlexMojoTest {
    */
   private File getExpectedOutputFile(JFlexMojo mojo) throws Exception {
     File outDir = (File) mojoRule.getVariableValueFromObject(mojo, "outputDirectory");
-    return new File(outDir, "/org/jamwiki/parser/" + "JAMWikiPreProcessor.kt");
+    return new File(outDir, "/org/jamwiki/parser/" + "JAMWikiPreProcessor.java");
   }
 }

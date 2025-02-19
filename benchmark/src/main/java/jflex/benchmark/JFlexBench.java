@@ -5,16 +5,12 @@
 
 package jflex.benchmark;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
 import java.util.concurrent.TimeUnit;
 import jflex.benchmark.pregen.NoAction17;
 import jflex.benchmark.pregen.NoAction18;
-import kotlinx.io.CoreKt;
-import kotlinx.io.JvmCoreKt;
-import kotlinx.io.Utf8Kt;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
@@ -46,10 +42,6 @@ public class JFlexBench {
     /** The reader the input will be read from. Must support {@code reset()}. */
     public Reader reader;
 
-    public kotlinx.io.Source source;
-
-    private kotlinx.io.Source sourceCopy;
-
     /** Create input and populate state fields. Runs once per entire benchmark. */
     @Setup
     public void setup() {
@@ -71,11 +63,7 @@ public class JFlexBench {
         }
       }
       length = builder.length();
-      sourceCopy =
-          CoreKt.buffered(
-              JvmCoreKt.asSource(
-                  new ByteArrayInputStream(builder.toString().getBytes(StandardCharsets.UTF_8))));
-      source = sourceCopy.peek();
+      reader = new StringReader(builder.toString());
     }
   }
 
@@ -88,8 +76,8 @@ public class JFlexBench {
    */
   @Benchmark
   public int noActionLexer(LexerState state) throws IOException {
-    state.source = state.sourceCopy.peek();
-    return new NoAction(state.source).yylex();
+    state.reader.reset();
+    return new NoAction(state.reader).yylex();
   }
 
   /**
@@ -126,12 +114,8 @@ public class JFlexBench {
   // @Benchmark
   public void baselineReader(LexerState state, Blackhole bh) throws IOException {
     char[] buffer = new char[state.length];
-    state.source = state.sourceCopy.peek();
-    for (int i = 0; i < buffer.length; i++) {
-      if (state.source.exhausted()) break;
-      buffer[i] = (char) Utf8Kt.readCodePointValue(state.source);
-    }
-    //    state.reader.read(buffer, 0, buffer.length);
+    state.reader.reset();
+    state.reader.read(buffer, 0, buffer.length);
     for (int i = 0; i < buffer.length; i++) {
       bh.consume(buffer[i]);
     }

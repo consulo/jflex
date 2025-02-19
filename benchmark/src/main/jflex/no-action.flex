@@ -5,8 +5,6 @@
 
 package jflex.benchmark;
 
-import kotlinx.io.*;
-
 /*
   A scanner with minimal action code, to measure inner matching loop
   performance.
@@ -20,7 +18,7 @@ import kotlinx.io.*;
 %int
 
 %{
-  private var matches = 0;
+  private int matches;
 %}
 
 SHORT = "a"
@@ -37,3 +35,4 @@ LONG  = "b"+
 [^]      { /* nothing */ }
 
 <<EOF>>  { return matches; }
+

@@ -6,7 +6,6 @@
 package jflex.maven.plugin.testsuite;
 
 import java.util.*;
-import kotlinx.io.*;
 
 %%
 
@@ -22,10 +21,10 @@ import kotlinx.io.*;
 %state DESCR JFLEXCMD JAVAC_FILES LINELIST VERSION
 
 %{
-  private var buffer = StringBuilder()
-  private var test = TestCase()
-  private lateinit var cmdLine: MutableList<String>
-  private lateinit var lineList: MutableList<Int>
+  private StringBuilder buffer = new StringBuilder();
+  private TestCase test = new TestCase();
+  private List<String> cmdLine;
+  private List<Integer> lineList;
 %}
 
 NL = \r | \n | \r\n
@@ -38,13 +37,13 @@ DIGIT = [0-9]
 
   "description:"      { yybegin(DESCR); }
 
-  "jflex: "           { cmdLine = ArrayList<String>(); yybegin(JFLEXCMD); }
-  "javac-files: "     { cmdLine = ArrayList<String>(); yybegin(JAVAC_FILES); }
+  "jflex: "           { cmdLine = new ArrayList<String>(); yybegin(JFLEXCMD); }
+  "javac-files: "     { cmdLine = new ArrayList<String>(); yybegin(JAVAC_FILES); }
 
   "jflex-fail:" " "+ "true"  { test.setExpectJFlexFail(true); }
   "jflex-fail:" " "+ "false" { test.setExpectJFlexFail(false); }
 
-  "jflex-diff:" " "+  { lineList = ArrayList<Int>();
+  "jflex-diff:" " "+  { lineList = new ArrayList<Integer>();
                         test.setJFlexDiff(lineList);
                         yybegin(LINELIST);
                       }
@@ -67,7 +66,7 @@ DIGIT = [0-9]
 
 
 <VERSION> {
-  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext()); yybegin(YYINITIAL); }
+  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext().toString()); yybegin(YYINITIAL); }
 }
 
 <DESCR> {
@@ -99,4 +98,5 @@ DIGIT = [0-9]
 
 <<EOF>>               { return test; }
 
-[^]   { throw LoadException("Illegal character: ["+yytext()+"]"); }
+[^]   { throw new LoadException("Illegal character: ["+yytext()+"]"); }
+
