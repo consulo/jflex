@@ -9,7 +9,7 @@ package jflex.exceptions;
  * This Exception is used in the macro expander to report cycles or undefined macro usages.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.4
+ * @version JFlex 1.10.5
  */
 public class MacroException extends Exception {
 

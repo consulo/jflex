@@ -12,7 +12,7 @@ import java.util.PrimitiveIterator;
  *
  * @author Gerwin Klein
  * @author Régis Décamps
- * @version JFlex 1.10.4
+ * @version JFlex 1.10.5
  */
 public final class Interval implements Iterable<Integer> {
 
