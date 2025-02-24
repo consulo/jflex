@@ -61,7 +61,7 @@ This is defined by the following section
       <plugin>
         <groupId>de.jflex</groupId>
         <artifactId>jflex-maven-plugin</artifactId>
-        <version>1.10.5</version>
+        <version>1.10.6</version>
         <executions>
           <execution>
             <goals>

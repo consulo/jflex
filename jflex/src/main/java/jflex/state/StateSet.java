@@ -19,7 +19,7 @@ import jflex.logging.Out;
  * <p>Provides an Integer iterator and a native int enumerator.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  * @see StateSetEnumerator
  */
 public final class StateSet implements Iterable<Integer> {

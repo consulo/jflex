@@ -10,7 +10,7 @@ package jflex.generator;
  * 0xFFFF_FFFF].
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  */
 public class HiCountEmitter extends CountEmitter {
 

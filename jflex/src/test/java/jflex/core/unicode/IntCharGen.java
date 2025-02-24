@@ -16,7 +16,7 @@ import jflex.logging.Out;
  * Generator for random Integer values that ensure to sometimes generate a cased character
  *
  * @author Jesse Coultas
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  */
 public class IntCharGen extends Generator<Integer> {
   /** Constructs generator for CharClasses */

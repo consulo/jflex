@@ -12,7 +12,7 @@ import jflex.l10n.ErrorMessages;
  * This Exception could be thrown while scanning the specification (e.g. unmatched input)
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  */
 public class ScannerException extends RuntimeException {
 

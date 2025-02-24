@@ -15,7 +15,7 @@ package jflex.core.unicode;
  * <p>All characters of the interval must belong to the same character class.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  */
 public class CharClassInterval {
 

@@ -22,7 +22,7 @@ import jflex.logging.Out;
  *
  * @author Gerwin Klein
  * @author Régis Décamps
- * @version JFlex 1.10.5
+ * @version JFlex 1.10.6
  */
 public final class IntCharSet implements Iterable<Integer> {
 
