@@ -453,7 +453,7 @@ public final class KotlinEmitter extends IEmitter {
     println("          }");
     println("          else if (zzAtEOF) {");
     println("            zzInput = YYEOF;");
-    println("            return@zzForAction;");
+    println("            break@zzForAction;");
     println("          }");
     println("          else {");
     println("            // store back cached positions");
@@ -467,7 +467,7 @@ public final class KotlinEmitter extends IEmitter {
     println("            zzEndReadL     = zzEndRead;");
     println("            if (eof) {");
     println("              zzInput = YYEOF;");
-    println("              return@zzForAction;");
+    println("              break@zzForAction;");
     println("            }");
     println("            else {");
     println("              zzInput = zzBufferL.codePoint(zzCurrentPosL);");
@@ -1040,7 +1040,7 @@ public final class KotlinEmitter extends IEmitter {
 
   private void emitGetRowMapNext() {
     println("          var zzNext: Int = zzTransL[ zzRowMapL[zzState] + zzCMap(zzInput) ];");
-    println("          if (zzNext == " + DFA.NO_TARGET + ") return@zzForAction;");
+    println("          if (zzNext == " + DFA.NO_TARGET + ") break@zzForAction;");
     println("          zzState = zzNext;");
     println();
 
@@ -1055,7 +1055,7 @@ public final class KotlinEmitter extends IEmitter {
             + NOLOOK
             + ") == "
             + NOLOOK
-            + " ) return@zzForAction;");
+            + " ) break@zzForAction;");
 
     skel.emitNext(); // 16
   }
