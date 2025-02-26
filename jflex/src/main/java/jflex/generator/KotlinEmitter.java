@@ -449,7 +449,7 @@ public final class KotlinEmitter extends IEmitter {
   private void emitNextInput() {
     println("          if (zzCurrentPosL < zzEndReadL) {");
     println("            zzInput = zzBufferL.codePoint(zzCurrentPosL);");
-    println("            zzCurrentPosL += Character.charCount(zzInput);");
+    println("            zzCurrentPosL += charCount(zzInput)");
     println("          }");
     println("          else if (zzAtEOF) {");
     println("            zzInput = YYEOF;");
@@ -471,7 +471,7 @@ public final class KotlinEmitter extends IEmitter {
     println("            }");
     println("            else {");
     println("              zzInput = zzBufferL.codePoint(zzCurrentPosL);");
-    println("              zzCurrentPosL += Character.charCount(zzInput);");
+    println("              zzCurrentPosL += charCount(zzInput)");
     println("            }");
     println("          }");
   }
@@ -905,7 +905,7 @@ public final class KotlinEmitter extends IEmitter {
       println("      while (zzCurrentPosL + zzCharCount < zzMarkedPosL) {");
       println("        zzCurrentPosL += zzCharCount");
       println("        zzCh = zzBufferL.codePoint(zzCurrentPosL);");
-      println("        zzCharCount = Character.charCount(zzCh);");
+      println("        zzCharCount = charCount(zzCh)");
       println("        when (zzCh.toChar()) {");
       println("         '\\u000B', '\\u000C', '\\u0085', '\\u2028', '\\u2029' -> {");
       if (scanner.lineCount()) println("          yyline++;");
@@ -1201,7 +1201,7 @@ public final class KotlinEmitter extends IEmitter {
         println("              while (zzFState != -1 && zzFPos < zzMarkedPos) {");
         println("                zzFinL[zzFPos] = ((zzAttrL[zzFState] and 1) == 1);");
         println("                zzInput = zzBufferL.codePoint(zzFPos);");
-        println("                zzFPos += Character.charCount(zzInput);");
+        println("                zzFPos += charCount(zzInput)");
         println("                zzFState = zzTransL[ zzRowMapL[zzFState] + zzCMap(zzInput) ];");
         println("              }");
         println("              if (zzFState != -1) {");
@@ -1215,7 +1215,7 @@ public final class KotlinEmitter extends IEmitter {
         println("              zzFPos = zzMarkedPos;");
         println("              while (!zzFinL[zzFPos] || (zzAttrL[zzFState] and 1) != 1) {");
         println("                zzInput = Character.codePointBefore(zzBufferL, zzFPos);");
-        println("                zzFPos -= Character.charCount(zzInput);");
+        println("                zzFPos -= charCount(zzInput)");
         println("                zzFState = zzTransL[ zzRowMapL[zzFState] + zzCMap(zzInput) ];");
         println("              };");
         println("              zzMarkedPos = zzFPos;");
@@ -1511,7 +1511,7 @@ public final class KotlinEmitter extends IEmitter {
       println("    var n = 0");
       println("    while (n < str.length) {");
       println("      var ch: Int = str.codePoint(n);");
-      println("      var charCount: Int = Character.charCount(ch);");
+      println("      var charCount: Int = charCount(ch)");
       println("      n += charCount;");
       println("      if (ch > 31 && ch < 127) {");
       println("        builder.append(ch.toChar());");
