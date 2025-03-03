@@ -35,6 +35,7 @@ public class KotlinHiLowEmitter extends KotlinPackEmitter {
     // close last string chunk:
     println("\";");
     nl();
+    println("  @JvmStatic");
     println("  private fun zzUnpack" + name + "(): IntArray {");
     println("    val result: IntArray = IntArray(" + numEntries + ");");
     println("    var offset: Int = 0;");
@@ -54,11 +55,12 @@ public class KotlinHiLowEmitter extends KotlinPackEmitter {
     println("  }");
 
     nl();
+    println("  @JvmStatic");
     println(
         "  private fun zzUnpack" + name + "(packed: String, offset: Int, result: IntArray): Int {");
     println("    var i: Int = 0;  /* index in packed string  */");
     println("    var j: Int = offset;  /* index in unpacked array */");
-    println("    var l: Int = packed.length - 1;");
+    println("    val l: Int = packed.length - 1;");
     println("    while (i < l) {");
     println("      val high: Int = packed[i++].code shl 16;");
     println("      result[j++] = high or packed[i++].code;");
@@ -68,6 +70,7 @@ public class KotlinHiLowEmitter extends KotlinPackEmitter {
 
     nl();
 
+    println("  @JvmStatic");
     out.append("  private val ")
         .append(constName())
         .append(": IntArray = zzUnpack")

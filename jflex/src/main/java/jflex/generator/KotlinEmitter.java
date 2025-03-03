@@ -459,7 +459,7 @@ public final class KotlinEmitter extends IEmitter {
     println("            // store back cached positions");
     println("            zzCurrentPos  = zzCurrentPosL;");
     println("            zzMarkedPos   = zzMarkedPosL;");
-    println("            var eof: Boolean = zzRefill();");
+    println("            val eof: Boolean = zzRefill();");
     println("            // get translated positions and possibly new buffer");
     println("            zzCurrentPosL  = zzCurrentPos;");
     println("            zzMarkedPosL   = zzMarkedPos;");
@@ -542,7 +542,7 @@ public final class KotlinEmitter extends IEmitter {
     for (String name : scanner.stateNames()) {
       int num = scanner.getStateNumber(name);
 
-      println("  " + visibility + " var " + name + ": Int = " + 2 * num);
+      println("  " + visibility + " const val " + name + ": Int = " + 2 * num);
     }
 
     // can't quite get rid of the indirection, even for non-bol lex states:
@@ -555,7 +555,8 @@ public final class KotlinEmitter extends IEmitter {
     println("   *                  at the beginning of a line");
     println("   * l is of the form l = 2*k, k a non negative integer");
     println("   */");
-    println("  private var ZZ_LEXSTATE: IntArray = intArrayOf(");
+    println("  @JvmStatic");
+    println("  private val ZZ_LEXSTATE: IntArray = intArrayOf(");
 
     int i, j = 0;
     print("    ");
@@ -886,9 +887,9 @@ public final class KotlinEmitter extends IEmitter {
 
     skel.emitNext(); // 11
 
-    println("    var zzTransL: IntArray = ZZ_TRANS;");
-    println("    var zzRowMapL: IntArray = ZZ_ROWMAP;");
-    println("    var zzAttrL: IntArray = ZZ_ATTRIBUTE;");
+    println("    val zzTransL: IntArray = ZZ_TRANS;");
+    println("    val zzRowMapL: IntArray = ZZ_ROWMAP;");
+    println("    val zzAttrL: IntArray = ZZ_ATTRIBUTE;");
 
     skel.emitNext(); // 12
 
@@ -1025,7 +1026,7 @@ public final class KotlinEmitter extends IEmitter {
     if (parser.getCharClasses().getMaxCharCode() <= 0xFF) {
       println("    return ZZ_CMAP[input];");
     } else {
-      println("    var offset: Int = input and " + (CMapBlock.BLOCK_SIZE - 1) + ";");
+      println("    val offset: Int = input and " + (CMapBlock.BLOCK_SIZE - 1) + ";");
       println(
           "    return if(offset == input)"
               + " ZZ_CMAP_BLOCKS[offset]"
@@ -1039,7 +1040,7 @@ public final class KotlinEmitter extends IEmitter {
   }
 
   private void emitGetRowMapNext() {
-    println("          var zzNext: Int = zzTransL[ zzRowMapL[zzState] + zzCMap(zzInput) ];");
+    println("          val zzNext: Int = zzTransL[zzRowMapL[zzState] + zzCMap(zzInput)];");
     println("          if (zzNext == " + DFA.NO_TARGET + ") break@zzForAction;");
     println("          zzState = zzNext;");
     println();
@@ -1452,7 +1453,7 @@ public final class KotlinEmitter extends IEmitter {
     // must be placed in companion object
     skel.emitNext(); // 1
 
-    println("  private var ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
+    println("  private const val ZZ_BUFFERSIZE: Int = " + scanner.bufferSize());
 
     if (scanner.debugOption()) {
       println("  private var ZZ_NL: Char = kotlinx.io.files.SystemPathSeparator");
@@ -1479,10 +1480,6 @@ public final class KotlinEmitter extends IEmitter {
     skel.emitNext(); // 3
 
     emitAttributes();
-
-    emitCMapAccess();
-
-    emitScanError();
 
     emitMain(functionName);
 
@@ -1532,6 +1529,10 @@ public final class KotlinEmitter extends IEmitter {
     emitPushback();
 
     emitDoEOF();
+
+    emitScanError();
+
+    emitCMapAccess();
 
     skel.emitNext(); // 10
 

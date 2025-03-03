@@ -128,7 +128,7 @@ public abstract class KotlinPackEmitter {
 
   /** emit next chunk */
   private void nextChunk() {
-    out.append("  private val ");
+    out.append("  private const val ");
     out.append(constName());
     out.append("_PACKED_");
     out.append(chunks);

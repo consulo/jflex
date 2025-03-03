@@ -51,6 +51,7 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
     println("\";");
 
     nl();
+    println("  @JvmStatic");
     println("  private fun zzUnpack" + name + "(): IntArray {");
     println("    val result: IntArray = IntArray(" + numEntries + ");");
     println("    var offset: Int = 0;");
@@ -74,6 +75,7 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
 
     nl();
 
+    println("  @JvmStatic");
     out.append("  private val ")
         .append(constName())
         .append(": IntArray = zzUnpack")
@@ -90,13 +92,14 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
    * @see #emitUnpack()
    */
   protected void emitUnpackChunk() {
+    println("  @JvmStatic");
     println(
         "  private fun zzUnpack"
             + name
             + "(packed: String , offset: Int, result: IntArray): Int {");
     println("    var i: Int = 0;       /* index in packed string  */");
     println("    var j: Int = offset;  /* index in unpacked array */");
-    println("    var l: Int = packed.length;");
+    println("    val l: Int = packed.length;");
     println("    while (i < l) {");
     println("      var count: Int = packed[i++].code;");
     println("      var value: Int = packed[i++].code;");

@@ -30,6 +30,7 @@ public class KotlinHiCountEmitter extends KotlinCountEmitter {
    */
   @Override
   public void emitUnpackChunk() {
+    println("  @JvmStatic");
     println(
         "  private static int zzUnpack" + name + "(String packed, int offset, int [] result) {");
     println("    int i = 0;       /* index in packed string  */");
