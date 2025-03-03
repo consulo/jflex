@@ -10,7 +10,7 @@ package jflex.performance;
  * <p>Not very exact, measures user time, not processor time.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.6
+ * @version JFlex 1.10.7
  */
 public class Timer {
 

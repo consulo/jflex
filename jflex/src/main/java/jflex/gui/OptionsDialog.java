@@ -29,7 +29,7 @@ import jflex.skeleton.Skeleton;
  * A dialog for setting JFlex options
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.6
+ * @version JFlex 1.10.7
  */
 @SuppressWarnings({"ConstructorInvokesOverridable"})
 public class OptionsDialog extends Dialog {
