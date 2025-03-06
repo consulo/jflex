@@ -9,7 +9,7 @@ package jflex.gui;
  * Constants used for GridLayout
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.7
+ * @version JFlex 1.10.8
  */
 public interface Handles {
 

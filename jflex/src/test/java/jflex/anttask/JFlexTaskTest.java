@@ -22,7 +22,7 @@ import org.junit.Test;
  * Unit tests for the {@link jflex.anttask.JFlexTask}.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.7
+ * @version JFlex 1.10.8
  */
 public class JFlexTaskTest {
 
