@@ -95,46 +95,6 @@ public final class KotlinEmitter extends IEmitter {
     }
   }
 
-  /**
-   * Constructs a file in Options.getDir() or in the same directory as another file. Makes a backup
-   * if the file already exists.
-   *
-   * @param name the name (without path) of the file
-   * @param input fall back location if {@code path = null} (expected to be a file in the directory
-   *     to write to)
-   * @return The constructed File
-   */
-  public static File normalize(String name, File input) {
-    File outputFile;
-
-    if (Options.getDir() == null) {
-      if (input == null || input.getParent() == null) {
-        outputFile = new File(name);
-      } else {
-        outputFile = new File(input.getParent(), name);
-      }
-    } else {
-      outputFile = new File(Options.getDir(), name);
-    }
-
-    if (outputFile.exists() && !Options.no_backup) {
-      File backup = new File(outputFile.toString() + "~");
-
-      if (backup.exists()) {
-        //noinspection ResultOfMethodCallIgnored
-        backup.delete();
-      }
-
-      if (outputFile.renameTo(backup)) {
-        Out.println("Old file \"" + outputFile + "\" saved as \"" + backup + "\"");
-      } else {
-        Out.println("Couldn't save old file \"" + outputFile + "\", overwriting!");
-      }
-    }
-
-    return outputFile;
-  }
-
   private void println() {
     out.println();
   }
@@ -771,61 +731,6 @@ public final class KotlinEmitter extends IEmitter {
     }
   }
 
-  private void emitConstructorDecl() {
-    emitConstructorDecl(true);
-
-    if ((scanner.standalone() || scanner.debugOption()) && scanner.ctorArgsCount() > 0) {
-      Out.warning(ErrorMessages.CTOR_DEBUG);
-      println();
-      emitConstructorDecl(false);
-    }
-  }
-
-  private void emitConstructorDecl(boolean printCtorArgs) {
-    println("  /**");
-    println("   * Creates a new scanner");
-    println("   *");
-    println("   * @param   in  the kotlinx.io.Source to read input from.");
-    println("   */");
-
-    String warn =
-        "// WARNING: this is a default constructor for "
-            + "debug/standalone only. Has no custom parameters or init code.";
-
-    if (!printCtorArgs) {
-      println(warn);
-    }
-
-    if (scanner.initThrow() != null && printCtorArgs) {
-      println("  @Throws(" + scanner.initThrow() + "::class)");
-    }
-
-    print("  constructor (input: kotlinx.io.Source");
-    if (printCtorArgs) {
-      emitCtorArgs();
-    }
-    print(")");
-
-    println(" {");
-
-    if (scanner.initCode() != null && printCtorArgs) {
-      print("  ");
-      print(scanner.initCode());
-    }
-
-    println("    this.zzReader = input;");
-
-    println("  }");
-    println();
-  }
-
-  private void emitCtorArgs() {
-    for (int i = 0; i < scanner.ctorArgsCount(); i++) {
-      print(", " + scanner.ctorType(i));
-      print(" " + scanner.ctorArg(i));
-    }
-  }
-
   private void emitDoEOF() {
     if (eofCode == null) {
       return;
@@ -851,8 +756,6 @@ public final class KotlinEmitter extends IEmitter {
   }
 
   private void emitLexFunctHeader(String functionName) {
-    print("  @Throws(kotlinx.io.IOException::class, ");
-
     if (!scanner.lexThrow().isEmpty() || scanner.scanErrorException() != null) {
       for (String thrown : scanner.lexThrow()) {
         print(thrown);
@@ -1074,7 +977,7 @@ public final class KotlinEmitter extends IEmitter {
       char c = s.charAt(i);
       switch (c) {
         case '\'':
-          result.append("\\\'");
+          result.append("\\'");
           break;
         case '\"':
           result.append("\\\"");
@@ -1499,7 +1402,7 @@ public final class KotlinEmitter extends IEmitter {
 
     skel.emitNext(); // 5
 
-    emitConstructorDecl();
+    //    emitConstructorDecl(); // zzReader is not used in IntelliJ, so this is not needed
 
     if (scanner.debugOption()) {
       println("");
