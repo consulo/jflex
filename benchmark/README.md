@@ -52,7 +52,7 @@ Building and Running
 
 will build the benchmark and
 
-    java -jar target/benchmark-full-1.10.8.jar
+    java -jar target/benchmark-full-1.10.9.jar
 
 will run it.
 

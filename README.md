@@ -178,10 +178,10 @@ You need JDK 8 or later.
 ./mvnw install
 ```
 
-This generates `jflex/target/jflex-1.10.8.jar` that you can use, e.g.
+This generates `jflex/target/jflex-1.10.9.jar` that you can use, e.g.
 
 ```sh
-java -jar jflex-1.10.8.jar --info
+java -jar jflex-1.10.9.jar --info
 ```
 
 

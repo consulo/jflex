@@ -29,7 +29,7 @@ import jflex.option.Options;
  * Deterministic finite automata representation in JFlex. Contains minimization algorithm.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.8
+ * @version JFlex 1.10.9
  */
 public class DFA {
 
