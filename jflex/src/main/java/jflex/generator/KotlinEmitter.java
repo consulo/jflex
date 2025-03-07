@@ -767,7 +767,6 @@ public final class KotlinEmitter extends IEmitter {
         print("::class, ");
       }
     }
-    println(")");
 
     if (scanner.cupCompatible() || scanner.cup2Compatible() || functionName.equals("advance")) {
       print("  override ");
