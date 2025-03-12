@@ -12,7 +12,7 @@
 #   - switches working copy to git **new_snapshot** branch
 #   - Changes the JFlex version in all POMs to the supplied
 #     snapshot version (X.Y.Z-SNAPSHOT)
-#   - Changes the bootstrap JFlex version in the de.jflex:jflex
+#   - Changes the bootstrap JFlex version in the org.jetbrains.intellij.deps.jflex:jflex
 #     POM to the latest release version.
 #   - Updates the JFlex version comments and @version tags
 #   - Commits the changes to master
@@ -42,28 +42,28 @@ my $sheet =<<'__STYLESHEET__';
   <xsl:param name="latest-release"/>
 
   <!-- Replace all JFlex versions with the new JFlex snapshot version, -->
-  <!-- except for the bootstrap version in the de.jflex:jflex POM.     -->
+  <!-- except for the bootstrap version in the org.jetbrains.intellij.deps.jflex:jflex POM.     -->
   <xsl:template
-      match=" /pom:project[(pom:groupId='de.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='de.jflex'))
+      match=" /pom:project[(pom:groupId='org.jetbrains.intellij.deps.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'))
                            and not (pom:artifactId='cup-maven-plugin')]/pom:version
-             |/pom:project/pom:parent[pom:groupId='de.jflex' and pom:artifactId='jflex-parent']/pom:version
-             |/pom:project/pom:build/pom:plugins/pom:plugin
-              [   (pom:groupId='de.jflex' and pom:artifactId='jflex-maven-plugin')
-              and not(/pom:project/pom:parent/pom:groupId='de.jflex' and /pom:project/pom:artifactId='jflex')]/pom:version
+             |/pom:project/pom:parent[pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-parent']/pom:version
             ">
     <version><xsl:value-of select="$snapshot"/></version>
   </xsl:template>
 
   <!-- Replace the bootstrap version with the latest release version -->
-  <!-- in the de.jflex:jflex POM.                                    -->
-  <xsl:template
-      match="/pom:project/pom:build/pom:plugins/pom:plugin
-             [   /pom:project/pom:parent/pom:groupId='de.jflex'
-             and /pom:project/pom:artifactId='jflex'
-             and pom:artifactId='jflex-maven-plugin']
-             /pom:version">
-    <version><xsl:value-of select="$latest-release"/></version>
-  </xsl:template>
+  <!-- in the org.jetbrains.intellij.deps.jflex:jflex POM.                                    -->
+
+  <!-- NOTE! we do not want to change the version of the maven plugin used for bootstrapping since we do not actually build the artifact -->
+
+  <!--<xsl:template -->
+  <!--    match="/pom:project/pom:build/pom:plugins/pom:plugin -->
+  <!--           [   /pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex' -->
+  <!--           and /pom:project/pom:artifactId='jflex' -->
+  <!--           and pom:artifactId='jflex-maven-plugin'] -->
+  <!--           /pom:version"> -->
+  <!--  <version><xsl:value-of select="$latest-release"/></version> -->
+  <!-- </xsl:template> -->
 
   <xsl:template match="@*|*|processing-instruction()|comment()">
     <xsl:copy>
@@ -85,7 +85,7 @@ if ($stat_results) {
 print "Yes.\n\n";
 
 print "Switching to new_snapshot branch..\n";
-system ("git checkout -b new_snapshot");
+system ("git checkout -b intellij/new_snapshot");
 if ($?) {
   print "FAILED.\n";
   exit 1;
@@ -97,7 +97,7 @@ my $previous_snapshot = get_latest_version();
 (my $latest_release = $previous_snapshot) =~ s/-SNAPSHOT//;
 
 print "Switching JFlex version -> $snapshot\n";
-print " and boostrap JFlex version -> $previous_snapshot in the de.jflex:jflex POM ...\n";
+print " and boostrap JFlex version -> $previous_snapshot in the org.jetbrains.intellij.deps.jflex:jflex POM ...\n";
 File::Find::find({wanted => \&wanted, follow => 1, follow_skip => 2}, '.');
 
 print "Updating version in Build.java\n";
