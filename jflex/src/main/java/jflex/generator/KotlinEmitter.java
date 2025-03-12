@@ -145,8 +145,7 @@ public final class KotlinEmitter extends IEmitter {
 
     println("  /** For the backwards DFA of general lookahead statements */");
     // TODO! convert to bitset; add a non java STL implementation
-    println(
-        "  private var zzFin: BooleanArray = BooleanArray(Math.min(ZZ_BUFFERSIZE, zzMaxBufferLen())+1);");
+    println("  private var zzFin: Bitset? = null");
     println();
   }
 
@@ -169,36 +168,36 @@ public final class KotlinEmitter extends IEmitter {
   }
 
   private void emitBitSet() {
-    println("private class Bitset {");
-    println("  private var bitset = LongArray(0)");
+    println("private class Bitset(");
+    println("  private val initialSize: Int = 16,");
+    println(") {");
+    println("  private var bitset = LongArray(initialSize)");
     println("");
-    println("  internal fun add(i: Int) {");
+    println("  internal operator fun set(i: Int, b: Boolean) {");
     println("    ensureCapacity(i)");
-    println("    val index = i shr indexShift");
-    println("    bitset[index] = bitset[index] or (1L shl i)");
+    println("    val index = i shr INDEX_SHIFT");
+    println("    bitset[index] = if (b) {");
+    println("      bitset[index] or (1L shl i)");
+    println("    } else {");
+    println("      bitset[index] and (1L shl i).inv()");
+    println("    }");
     println("  }");
     println("");
-    println("  internal fun contains(i: Int): Boolean {");
-    println("    val index = i shr indexShift");
+    println("  internal operator fun get(i: Int): Boolean {");
+    println("    val index = i shr INDEX_SHIFT");
     println("    if (index >= bitset.size) return false");
     println("    return bitset[index] and (1L shl i) != 0L");
     println("  }");
     println("");
-    println("  internal fun remove(i: Int) {");
-    println("    val index = i shr indexShift");
-    println("    bitset[index] = bitset[index] and (1L shl i).inv()");
-    println("  }");
-    println("");
     println("  private fun ensureCapacity(i: Int) {");
-    println("    val index = i shr indexShift");
-    println("    if (index >= bitset.size) {");
+    println("    val index = i shr INDEX_SHIFT");
+    println("    while (index >= bitset.size) {");
     println("      bitset = bitset.copyOf(bitset.size * 3 / 2)");
     println("    }");
     println("  }");
     println("");
     println("  companion object {");
-    println("    private const val indexShift = 6");
-    println("    private const val initialSize = 16");
+    println("    private const val INDEX_SHIFT = 6");
     println("  }");
     println("}");
   }
@@ -1097,10 +1096,10 @@ public final class KotlinEmitter extends IEmitter {
         println("            // general lookahead, find correct zzMarkedPos");
         println("            { var zzFState = " + dfa.entryState(action.getEntryState()) + ";");
         println("              var zzFPos = zzStartRead;");
-        println("              if (zzFin.size <= zzBufferL.size) {");
-        println("                zzFin = BooleanArray(zzBufferL.size+1);");
+        println("              if (zzFin == null) {");
+        println("                zzFin = Bitset(zzBufferL.length+1);");
         println("              }");
-        println("              var zzFinL = zzFin;");
+        println("              val zzFinL = zzFin !!;");
         println("              while (zzFState != -1 && zzFPos < zzMarkedPos) {");
         println("                zzFinL[zzFPos] = ((zzAttrL[zzFState] and 1) == 1);");
         println("                zzInput = zzBufferL.codePoint(zzFPos);");
