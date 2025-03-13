@@ -15,7 +15,7 @@ import java.io.PrintWriter;
  * Convenience class for JFlex stdout, redirects output to a TextArea if in GUI mode.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.10-SNAPSHOT
+ * @version JFlex 1.10.10
  */
 public final class StdOutWriter extends PrintWriter {
 
