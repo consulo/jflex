@@ -14,7 +14,7 @@ import org.junit.Test;
  * PackEmitterTest
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.9
+ * @version JFlex 1.10.10-SNAPSHOT
  */
 public class PackEmitterTest {
 

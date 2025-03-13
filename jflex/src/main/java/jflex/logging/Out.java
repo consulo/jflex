@@ -29,7 +29,7 @@ import jflex.performance.Timer;
  * <p>Counts error and warning messages.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.9
+ * @version JFlex 1.10.10-SNAPSHOT
  */
 public final class Out {
 
