@@ -54,7 +54,8 @@ my $sheet =<<'__STYLESHEET__';
   <!-- Replace the bootstrap version with the latest release version -->
   <!-- in the org.jetbrains.intellij.deps.jflex:jflex POM.                                    -->
 
-  <!-- NOTE! we do not want to change the version of the maven plugin used for bootstrapping since we do not actually build the artifact -->
+  <!-- NOTE! we currently do not want to change the version of the maven plugin used for bootstrapping since we do not actually build the artifact -->
+  <!-- If we decide to change this, this section should be re-added -->
 
   <!--<xsl:template -->
   <!--    match="/pom:project/pom:build/pom:plugins/pom:plugin -->
