@@ -17,7 +17,7 @@ import java.util.Set;
  * <p>The enum values are expected to be keys in the {@code Messages.properties} resource bundle.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.11
+ * @version JFlex 1.10.12
  */
 public enum ErrorMessages {
   UNTERMINATED_STR,
