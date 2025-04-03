@@ -450,7 +450,6 @@ public final class KotlinEmitter extends IEmitter {
             + Build.VERSION
             + " http://jflex.de/  (tweaked for IntelliJ platform)");
     println("// source: " + sourceFileString(inputFile));
-    println("// skeleton: " + sourceFileString(Skeleton.getSkeletonFile()));
     println("");
   }
 
