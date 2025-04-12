@@ -17,7 +17,7 @@ import jflex.logging.Out;
  * Generator for random {@link IntCharSet} instances.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.12
+ * @version JFlex 1.10.13
  * @see IntCharSet
  */
 public class IntCharSetGen extends Generator<IntCharSet> {

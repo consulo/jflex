@@ -25,7 +25,7 @@ import jflex.logging.Out;
  * <p>Maps macros to their (expanded) definitions, detects cycles and unused macros.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.12
+ * @version JFlex 1.10.13
  */
 public final class Macros {
 

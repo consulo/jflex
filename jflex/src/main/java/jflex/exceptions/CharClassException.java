@@ -9,7 +9,7 @@ package jflex.exceptions;
  * This Exception is used in class CharClasses.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.12
+ * @version JFlex 1.10.13
  */
 public class CharClassException extends RuntimeException {
 

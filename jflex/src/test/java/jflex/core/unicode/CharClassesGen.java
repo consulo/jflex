@@ -17,7 +17,7 @@ import java.util.List;
  * Generator for random {@link CharClasses} instances.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.12
+ * @version JFlex 1.10.13
  * @see CharClasses
  */
 public class CharClassesGen extends Generator<CharClasses> {
