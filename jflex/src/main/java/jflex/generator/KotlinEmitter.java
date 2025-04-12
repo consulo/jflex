@@ -1306,32 +1306,32 @@ public final class KotlinEmitter extends IEmitter {
 
     println("  /** Number of newlines encountered up to the start of the matched text. */");
     if (!scanner.lineCount()) {
-      println("  @SuppressWarnings(\"unused\")");
+      println("  @Suppress(\"unused\")");
     }
     println("  private var yyline: Int = 0;");
     println();
     println(
         "  /** Number of characters from the last newline up to the start of the matched text. */");
     if (!scanner.columnCount()) {
-      println("  @SuppressWarnings(\"unused\")");
+      println("  @Suppress(\"unused\")");
     }
     println("  protected var yycolumn: Int = 0;");
     println();
     println("  /** Number of characters up to the start of the matched text. */");
     if (!scanner.charCount()) {
-      println("  @SuppressWarnings(\"unused\")");
+      println("  @Suppress(\"unused\")");
     }
     println("  private var yychar: Long = 0;");
     println();
     println("  /** Whether the scanner is currently at the beginning of a line. */");
     if (!scanner.bolUsed()) {
-      println("  @SuppressWarnings(\"unused\")");
+      println("  @Suppress(\"unused\")");
     }
     println("  private var zzAtBOL: Boolean = false;");
     println();
     println("  /** Whether the user-EOF-code has already been executed. */");
     if (eofCode == null) {
-      println("  @SuppressWarnings(\"unused\")");
+      println("  @Suppress(\"unused\")");
     }
     println("  private var zzEOFDone: Boolean = false;");
     println();
