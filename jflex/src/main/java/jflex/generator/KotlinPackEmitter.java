@@ -107,7 +107,7 @@ public abstract class KotlinPackEmitter {
   public void breaks() {
     if (UTF8Length >= maxSize) {
       // close current chunk
-      out.append("\";");
+      out.append("\"");
       nl();
 
       nextChunk();

@@ -33,21 +33,21 @@ public class KotlinHiCountEmitter extends KotlinCountEmitter {
     println("  @JvmStatic");
     println(
         "  private static int zzUnpack" + name + "(String packed, int offset, int [] result) {");
-    println("    int i = 0;       /* index in packed string  */");
-    println("    int j = offset;  /* index in unpacked array */");
-    println("    int l = packed.length() - 2; /* reading 3 chars per entry */");
+    println("    int i = 0       /* index in packed string  */");
+    println("    int j = offset  /* index in unpacked array */");
+    println("    int l = packed.length() - 2 /* reading 3 chars per entry */");
     println("    while (i < l) {");
-    println("      int count = packed.get(i++);");
-    println("      int high = packed.get(i++) << 16;");
-    println("      int value = high | packed.get(i++);");
+    println("      int count = packed.get(i++)");
+    println("      int high = packed.get(i++) << 16");
+    println("      int value = high | packed.get(i++)");
     if (translate == 1) {
-      println("      value--;");
+      println("      value--");
     } else if (translate != 0) {
       println("      value-= " + translate);
     }
-    println("      do result[j++] = value; while (--count > 0);");
+    println("      do result[j++] = value while (--count > 0)");
     println("    }");
-    println("    return j;");
+    println("    return j");
     println("  }");
   }
 

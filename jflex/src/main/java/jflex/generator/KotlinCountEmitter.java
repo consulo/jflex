@@ -48,13 +48,13 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
   @Override
   public void emitUnpack() {
     // close last string chunk:
-    println("\";");
+    println("\"");
 
     nl();
     println("  @JvmStatic");
     println("  private fun zzUnpack" + name + "(): IntArray {");
-    println("    val result: IntArray = IntArray(" + numEntries + ");");
-    println("    var offset: Int = 0;");
+    println("    val result: IntArray = IntArray(" + numEntries + ")");
+    println("    var offset: Int = 0");
 
     for (int i = 0; i < chunks; i++) {
       println(
@@ -64,10 +64,10 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
               + constName()
               + "_PACKED_"
               + i
-              + ", offset, result);");
+              + ", offset, result)");
     }
 
-    println("    return result;");
+    println("    return result");
     println("  }");
     nl();
 
@@ -97,14 +97,14 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
         "  private fun zzUnpack"
             + name
             + "(packed: String , offset: Int, result: IntArray): Int {");
-    println("    var i: Int = 0;       /* index in packed string  */");
-    println("    var j: Int = offset;  /* index in unpacked array */");
-    println("    val l: Int = packed.length;");
+    println("    var i: Int = 0       /* index in packed string  */");
+    println("    var j: Int = offset  /* index in unpacked array */");
+    println("    val l: Int = packed.length");
     println("    while (i < l) {");
-    println("      var count: Int = packed[i++].code;");
-    println("      var value: Int = packed[i++].code;");
+    println("      var count: Int = packed[i++].code");
+    println("      var value: Int = packed[i++].code");
     if (translate == 1) {
-      println("      value--;");
+      println("      value--");
     } else if (translate != 0) {
       println("      value-= " + translate);
     }
@@ -112,7 +112,7 @@ public class KotlinCountEmitter extends KotlinPackEmitter {
     println("          result[j++] = value");
     println("      while (--count > 0)");
     println("    }");
-    println("    return j;");
+    println("    return j");
     println("  }");
   }
 
