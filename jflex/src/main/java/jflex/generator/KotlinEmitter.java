@@ -1081,14 +1081,15 @@ public final class KotlinEmitter extends IEmitter {
 
       if (action.lookAhead() == Action.Kind.FIXED_BASE) {
         println("            // lookahead expression with fixed base length");
-        println("            zzMarkedPos = Character.offsetByCodePoints");
-        println("                (zzBufferL, zzStartRead, " + action.getLookLength() + ");");
+        print("            zzMarkedPos = zzBufferL.offsetByCodePoints");
+        println("(zzStartRead, " + action.getLookLength() + ");");
       }
 
       if (action.lookAhead() == Action.Kind.FIXED_LOOK
           || action.lookAhead() == Action.Kind.FINITE_CHOICE) {
         println("            // lookahead expression with fixed lookahead length");
-        println("                (zzBufferL, zzMarkedPos, -" + action.getLookLength() + ");");
+        print("            zzMarkedPos = zzBufferL.offsetByCodePoints");
+        println("(zzMarkedPos, -" + action.getLookLength() + ");");
       }
 
       if (action.lookAhead() == Action.Kind.GENERAL_LOOK) {
