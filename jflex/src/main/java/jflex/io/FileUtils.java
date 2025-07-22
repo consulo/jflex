@@ -16,7 +16,7 @@ public class FileUtils {
       String rootDir = rootDirectory.getCanonicalPath() + File.separator;
       String f = file.getCanonicalPath();
       if (f.startsWith(rootDir)) {
-        return f.substring(rootDir.length());
+        return f.substring(rootDir.length()).replace('\\', '/');
       }
     } catch (IOException e) {
       // fall back to file.getPath()

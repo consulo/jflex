@@ -25,14 +25,15 @@ public class FileUtilsTest {
   public void test_getRelativePath_fileNotInDir() {
     File dir = new File("/a/b/c");
     File f = new File("/d/e/f/foo.bar");
-    assertThat(getRelativePath(dir, f)).isEqualTo("/d/e/f/foo.bar");
+    assertThat(getRelativePath(dir, f))
+        .isEqualTo("/d/e/f/foo.bar".replace('/', File.separatorChar));
   }
 
   @Test
   public void test_getRelativePath_sameStart() {
     File dir = new File("/a/b/c");
     File f = new File("/a/b/c.txt");
-    assertThat(getRelativePath(dir, f)).isEqualTo("/a/b/c.txt");
+    assertThat(getRelativePath(dir, f)).isEqualTo("/a/b/c.txt".replace('/', File.separatorChar));
   }
 
   @Test

@@ -35,3 +35,5 @@ buildtools
 # release files
 /release
 /out
+
+.consulo/

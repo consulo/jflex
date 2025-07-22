@@ -11,11 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import jflex.base.Build;
 import jflex.base.Pair;
-import jflex.core.AbstractLexScan;
-import jflex.core.Action;
-import jflex.core.EOFActions;
-import jflex.core.LexParse;
-import jflex.core.LexScan;
+import jflex.core.*;
 import jflex.core.unicode.CMapBlock;
 import jflex.core.unicode.CharClasses;
 import jflex.dfa.DFA;
@@ -1405,7 +1401,9 @@ public final class Emitter {
 
     skel.emitNext();
 
-    emitConstructorDecl();
+    if (!Options.no_constructor) {
+      emitConstructorDecl();
+    }
 
     if (scanner.debugOption()) {
       println("");

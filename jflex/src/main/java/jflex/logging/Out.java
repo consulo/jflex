@@ -5,7 +5,7 @@
 
 package jflex.logging;
 
-import java.awt.TextArea;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import jflex.performance.Timer;
 public final class Out {
 
   /** Platform specific newline. */
-  public static final String NL = System.getProperty("line.separator");
+  public static final String NL = "\n";
 
   private Out() {}
 
