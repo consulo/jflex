@@ -9,15 +9,10 @@
 #
 # Performs the following:
 #
-#   - switches working copy to git **new_snapshot** branch
+#   - switches working copy to git **new_version** branch
 #   - Changes the JFlex version in all POMs to the supplied
-#     snapshot version (X.Y.Z-SNAPSHOT)
-#   - Changes the bootstrap JFlex version in the de.jflex:jflex
-#     POM to the latest release version.
+#     version (X.Y.Z)
 #   - Updates the JFlex version comments and @version tags
-#   - Commits the changes to master
-#
-# For more information, see HOWTO_release.txt.
 #
 
 use strict;
@@ -27,10 +22,10 @@ use XML::LibXML;
 use XML::LibXSLT;
 use Getopt::Long;
 
-my $snapshot;
-my $usage = "Usage: $0 --snapshot <new-snapshot-version>\n e.g.: $0 --snapshot 1.6.0-SNAPSHOT\n";
-GetOptions("snapshot=s" => \$snapshot) or die($usage);
-die $usage unless (defined($snapshot) && $snapshot =~ /-SNAPSHOT$/);
+my $new_release;
+my $usage = "Usage: $0 --release <new-release-version>\n e.g.: $0 --release 1.6.0\n";
+GetOptions("release=s" => \$new_release) or die($usage);
+die $usage unless defined($new_release);
 
 my $sheet =<<'__STYLESHEET__';
 <xsl:stylesheet version="1.0"
@@ -38,32 +33,33 @@ my $sheet =<<'__STYLESHEET__';
                 xmlns:pom="http://maven.apache.org/POM/4.0.0"
                 xmlns="http://maven.apache.org/POM/4.0.0"
                 exclude-result-prefixes="pom">
-  <xsl:param name="snapshot"/>
+  <xsl:param name="release"/>
   <xsl:param name="latest-release"/>
 
-  <!-- Replace all JFlex versions with the new JFlex snapshot version, -->
-  <!-- except for the bootstrap version in the de.jflex:jflex POM.     -->
+  <!-- Replace all JFlex versions with the new JFlex release version, -->
+  <!-- except for the bootstrap version in the org.jetbrains.intellij.deps.jflex:jflex POM.     -->
   <xsl:template
-      match=" /pom:project[(pom:groupId='de.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='de.jflex'))
+      match=" /pom:project[(pom:groupId='org.jetbrains.intellij.deps.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'))
                            and not (pom:artifactId='cup-maven-plugin')]/pom:version
-             |/pom:project/pom:parent[pom:groupId='de.jflex' and pom:artifactId='jflex-parent']/pom:version
-             |/pom:project/pom:build/pom:plugins/pom:plugin
-              [   (pom:groupId='de.jflex' and pom:artifactId='jflex-maven-plugin')
-              and not(/pom:project/pom:parent/pom:groupId='de.jflex' and /pom:project/pom:artifactId='jflex')]/pom:version
+             |/pom:project/pom:parent[pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-parent']/pom:version
             ">
-    <version><xsl:value-of select="$snapshot"/></version>
+    <version><xsl:value-of select="$release"/></version>
   </xsl:template>
 
   <!-- Replace the bootstrap version with the latest release version -->
-  <!-- in the de.jflex:jflex POM.                                    -->
-  <xsl:template
-      match="/pom:project/pom:build/pom:plugins/pom:plugin
-             [   /pom:project/pom:parent/pom:groupId='de.jflex'
-             and /pom:project/pom:artifactId='jflex'
-             and pom:artifactId='jflex-maven-plugin']
-             /pom:version">
-    <version><xsl:value-of select="$latest-release"/></version>
-  </xsl:template>
+  <!-- in the org.jetbrains.intellij.deps.jflex:jflex POM.                                    -->
+
+  <!-- NOTE! we currently do not want to change the version of the maven plugin used for bootstrapping since we do not actually build the artifact -->
+  <!-- If we decide to change this, this section should be re-added -->
+
+  <!--<xsl:template -->
+  <!--    match="/pom:project/pom:build/pom:plugins/pom:plugin -->
+  <!--           [   /pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex' -->
+  <!--           and /pom:project/pom:artifactId='jflex' -->
+  <!--           and pom:artifactId='jflex-maven-plugin'] -->
+  <!--           /pom:version"> -->
+  <!--  <version><xsl:value-of select="$latest-release"/></version> -->
+  <!-- </xsl:template> -->
 
   <xsl:template match="@*|*|processing-instruction()|comment()">
     <xsl:copy>
@@ -84,8 +80,8 @@ if ($stat_results) {
 }
 print "Yes.\n\n";
 
-print "Switching to new_snapshot branch..\n";
-system ("git checkout -b new_snapshot");
+print "Switching to new release branch..\n";
+system ("git checkout -b intellij/$new_release");
 if ($?) {
   print "FAILED.\n";
   exit 1;
@@ -93,56 +89,55 @@ if ($?) {
 print "OK.\n\n";
 
 # read versions after branch switch!
-my $previous_snapshot = get_latest_version();
-(my $latest_release = $previous_snapshot) =~ s/-SNAPSHOT//;
+my $previous_release = get_latest_version();
 
-print "Switching JFlex version -> $snapshot\n";
-print " and boostrap JFlex version -> $previous_snapshot in the de.jflex:jflex POM ...\n";
+print "Switching JFlex version -> $new_release\n";
+print " and boostrap JFlex version -> $previous_release in the org.jetbrains.intellij.deps.jflex:jflex POM ...\n";
 File::Find::find({wanted => \&wanted, follow => 1, follow_skip => 2}, '.');
 
 print "Updating version in Build.java\n";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/src/main/java/jflex/base/Build.java !);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/src/main/java/jflex/base/Build.java !);
 
 print " updating version in bin/jflex*";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/bin/jflex !);
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/bin/jflex.bat !);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/bin/jflex !);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/bin/jflex.bat !);
 print "\ndone.\n\n";
 
 print " updating version in jflex/examples/common/include.xml";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/examples/common/include.xml!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/examples/common/include.xml!);
 print "\ndone.\n\n";
 
 print " updating version in docs/xmanual.tex";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" docs/xmanual.tex!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" docs/xmanual.tex!);
 print "\ndone.\n\n";
 
 print " updating version in docs/docs.bzl";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" docs/docs.bzl!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" docs/docs.bzl!);
 print "\ndone.\n\n";
 
 print " updating version in docs/Makefile";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" docs/Makefile!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" docs/Makefile!);
 print "\ndone.\n\n";
 
 print " updating version in jflex/README.md and exmaples/*/README.md";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/README.md!);
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" jflex/examples/simple/README.md!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/README.md!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" jflex/examples/simple/README.md!);
 print "\ndone.\n\n";
 
 print " updating version in scripts/mk-release.sh";
-system (qq!perl -pi -e "s/\Q$previous_snapshot\E/$snapshot/" scripts/mk-release.sh!);
+system (qq!perl -pi -e "s/\Q$previous_release\E/$new_release/" scripts/mk-release.sh!);
 print "\ndone.\n\n";
 
 print " updating version in comments and version tags in jflex/**.java";
-system (qq!find jflex -name "*.java" | xargs perl -pi -e "s/\Q$previous_snapshot         \E/$snapshot/"!);
-system (qq!find jflex -name "*.java" | xargs perl -pi -e "s/\@version \Q$previous_snapshot\E/\@version $snapshot/"!);
-system (qq!find jflex -name "LexScan.flex" | xargs perl -pi -e "s/\Q$previous_snapshot         \E/$snapshot/"!);
-system (qq!find jflex -name "LexParse.cup" | xargs perl -pi -e "s/\Q$previous_snapshot         \E/$snapshot/"!);
+system (qq!find jflex -name "*.java" | xargs perl -pi -e "s/\Q$previous_release         \E/$new_release/"!);
+system (qq!find jflex -name "*.java" | xargs perl -pi -e "s/\@version \Q$previous_release\E/\@version $new_release/"!);
+system (qq!find jflex -name "LexScan.flex" | xargs perl -pi -e "s/\Q$previous_release         \E/$new_release/"!);
+system (qq!find jflex -name "LexParse.cup" | xargs perl -pi -e "s/\Q$previous_release         \E/$new_release/"!);
 print "\ndone.\n\n";
 
 print "Committing version update ...\n";
 my $ret_val = system
-   (qq!git commit -a -m "bump version: JFlex $previous_snapshot -> $snapshot"!);
+   (qq!git commit -a -m "bump version: JFlex $previous_release -> $new_release"!);
 if ($ret_val) {
   print STDERR "ERROR - Aborting.\n";
   exit $ret_val >> 8; # Exit with git's return value
@@ -173,7 +168,7 @@ sub transform {
   my $style_doc = XML::LibXML->load_xml('string' => $sheet);
   my $stylesheet = $xslt->parse_stylesheet($style_doc);
   my $results = $stylesheet->transform_file
-      ($pom, 'snapshot' => "'$snapshot'",
-             'latest-release' => "'$latest_release'");
+      ($pom, 'release' => "'$new_release'",
+             'latest-release' => "'$previous_release'");
   $stylesheet->output_file($results, $pom); # replace existing file
 }

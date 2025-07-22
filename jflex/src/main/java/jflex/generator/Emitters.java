@@ -16,25 +16,33 @@ import jflex.dfa.DFA;
 import jflex.logging.Out;
 import jflex.option.Options;
 
-/** Factory class for Emitter */
+/** Factory class for IEmitter */
 public final class Emitters {
 
   private Emitters() {}
 
   /**
-   * Creates an Emitter that generates the java code in a file. The output file name is inferred
+   * Creates an IEmitter that generates the java code in a file. The output file name is inferred
    * from the class defined in the grammar.
    *
    * @param inputLexFile input grammar.
    * @param parser a {@link LexParse}.
    * @param dfa a {@link DFA}.
-   * @return {@link Emitter}.
+   * @return {@link IEmitter}.
    * @throws IOException if any.
    */
-  public static Emitter createFileEmitter(File inputLexFile, LexParse parser, DFA dfa)
+  public static IEmitter createFileEmitter(File inputLexFile, LexParse parser, DFA dfa)
       throws IOException {
 
-    String name = Emitter.getBaseName(parser.scanner.className()) + ".java";
+    String name = "";
+    switch (Options.output_mode) {
+      case JAVA:
+        name = Emitter.getBaseName(parser.scanner.className()) + ".java";
+        break;
+      case KOTLIN:
+        name = Emitter.getBaseName(parser.scanner.className()) + ".kt";
+        break;
+    }
 
     File outputFile = Emitter.normalize(name, inputLexFile);
     String outputFileName = outputFile.getAbsolutePath();
@@ -46,18 +54,30 @@ public final class Emitters {
             new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(outputFile), Options.encoding)));
 
-    return new Emitter(outputFileName, inputLexFile, parser, dfa, out);
+    switch (Options.output_mode) {
+      case JAVA:
+        return new Emitter(outputFileName, inputLexFile, parser, dfa, out);
+      case KOTLIN:
+        return new KotlinEmitter(outputFileName, inputLexFile, parser, dfa, out);
+    }
+    return null;
   }
 
   /**
-   * Create Emitter that writes to writer
+   * Create IEmitter that writes to writer
    *
    * @param parser a {@link LexParse}.
    * @param dfa a {@link DFA}.
    * @param writer output file.
-   * @return {@link Emitter}.
+   * @return {@link IEmitter}.
    */
-  public static Emitter createPrintWriterEmitter(LexParse parser, DFA dfa, PrintWriter writer) {
-    return new Emitter(null, new File(""), parser, dfa, writer);
+  public static IEmitter createPrintWriterEmitter(LexParse parser, DFA dfa, PrintWriter writer) {
+    switch (Options.output_mode) {
+      case JAVA:
+        return new Emitter(null, new File(""), parser, dfa, writer);
+      case KOTLIN:
+        return new KotlinEmitter(null, new File(""), parser, dfa, writer);
+    }
+    return null;
   }
 }

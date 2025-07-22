@@ -36,7 +36,7 @@ import jflex.option.Options;
  *
  * @author Gerwin Klein
  * @author Régis Décamps
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.14
  */
 public class Main {
 
@@ -195,6 +195,15 @@ public class Main {
       if (Objects.equals(argv[i], "--legacydot")
           || Objects.equals(argv[i], "-legacydot")) { // $NON-NLS-1$ //$NON-NLS-2$
         Options.legacy_dot = true;
+        continue;
+      }
+
+      if (Objects.equals(argv[i], "--output-mode") || Objects.equals(argv[i], "-output-mode")) {
+        if (++i >= argv.length) {
+          Out.error(ErrorMessages.NO_OUTPUT_MODE);
+          throw new GeneratorException();
+        }
+        OptionUtils.setOutputMode(argv[i]);
         continue;
       }
 

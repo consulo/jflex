@@ -32,15 +32,17 @@ import jflex.logging.Out;
  *
  * @see jflex.generator.Emitter
  * @author Gerwin Klein
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.14
  */
 public class Skeleton {
 
   /** location of default skeleton */
-  private static final String DEFAULT_LOC = "jflex/skeleton.default";
+  private static final String DEFAULT_LOC = "jflex/idea-flex.skeleton";
 
   /** expected number of sections in the skeleton file */
   private static final int size = 21;
+
+  private static File skeleton_file;
 
   /** The skeleton */
   public static String[] line;
@@ -100,6 +102,7 @@ public class Skeleton {
     try (BufferedReader reader =
         Files.newBufferedReader(Paths.get(skeletonFile.toString()), UTF_8)) {
       readSkel(reader);
+      skeleton_file = skeletonFile;
     } catch (IOException e) {
       Out.error(ErrorMessages.SKEL_IO_ERROR);
       throw new GeneratorException(e);
@@ -187,9 +190,14 @@ public class Skeleton {
     try (BufferedReader reader =
         new BufferedReader(new InputStreamReader(url.openStream(), UTF_8))) {
       readSkel(reader);
+      skeleton_file = new File(url.getFile());
     } catch (IOException e) {
       Out.error(ErrorMessages.SKEL_IO_ERROR_DEFAULT);
       throw new GeneratorException(e);
     }
+  }
+
+  public static File getSkeletonFile() {
+    return skeleton_file;
   }
 }

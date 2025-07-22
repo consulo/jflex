@@ -7,7 +7,7 @@
 # fail on error
 set -e
 
-VERSION="1.10.0-SNAPSHOT"
+VERSION="1.10.14"
 JFLEX_JAR="jflex-full-$VERSION.jar"
 
 BASEDIR="$(cd "$(dirname "$0")" && pwd -P)"/..
@@ -78,6 +78,6 @@ shasum $JFLEX_TAR > $JFLEX_TAR.sha1
 rm -f $JFLEX_ZIP $JFLEX_ZIP.asc $JFLEX_ZIP.sha1
 zip -r $JFLEX_ZIP jflex-$VERSION
 "$GPG" -ba -u $KEY $JFLEX_ZIP
-shasum $JFLEX_ZIP > $JFLEX_ZIP.sha1
+shasum $JFLEX_ZIP > $JFLEX_ZIP.zip.sha1
 
 echo "------[ Release packages in $(PWD) ]"

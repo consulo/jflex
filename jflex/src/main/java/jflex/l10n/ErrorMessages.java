@@ -17,7 +17,7 @@ import java.util.Set;
  * <p>The enum values are expected to be keys in the {@code Messages.properties} resource bundle.
  *
  * @author Gerwin Klein
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.14
  */
 public enum ErrorMessages {
   UNTERMINATED_STR,
@@ -107,7 +107,8 @@ public enum ErrorMessages {
   UNKNOWN_WARNING,
   NOT_A_WARNING_ID,
   UNICODE_TOO_LONG,
-  TOKEN_SIZE_LIMIT;
+  TOKEN_SIZE_LIMIT,
+  NO_OUTPUT_MODE;
 
   private static final Set<ErrorMessages> configurableWarnings =
       new HashSet<>(

@@ -18,7 +18,7 @@ import jflex.l10n.ErrorMessages;
  *
  * @see jflex.core.OptionUtils
  * @author Gerwin Klein
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.14
  */
 public class Options {
 
@@ -66,6 +66,8 @@ public class Options {
 
   /** The encoding to use for input and output files. */
   public static Charset encoding;
+  /** The language the emitted scanner is written in */
+  public static OutputMode output_mode;
 
   // disable default contructor
   public static boolean no_constructor;

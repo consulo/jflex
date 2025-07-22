@@ -30,7 +30,7 @@ import jflex.scanner.ScannerException;
  *
  * @author Gerwin Klein
  * @author Régis Décamps
- * @version JFlex 1.10.0-SNAPSHOT
+ * @version JFlex 1.10.14
  */
 public class LexGenerator {
 
@@ -107,7 +107,7 @@ public class LexGenerator {
 
       time.start();
 
-      Emitter emitter = Emitters.createFileEmitter(inputFile, parser, dfa);
+      IEmitter emitter = Emitters.createFileEmitter(inputFile, parser, dfa);
       emitter.emit();
 
       time.stop();

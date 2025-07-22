@@ -3,10 +3,10 @@
   public static final int YYEOF = -1;
 
   /** Initial size of the lookahead buffer. */
---- private static final int ZZ_BUFFERSIZE = ...;
+--- private static final int ZZ_BUFFERSIZE = ...; L1
 
   // Lexical states.
----  lexical states, charmap
+---  lexical states, charmap L2
 
   /** Error code for "Unknown internal scanner error". */
   private static final int ZZ_UNKNOWN_ERROR = 0;
@@ -25,7 +25,7 @@
     "Error: pushback value was too large"
   };
 
---- isFinal list
+--- isFinal list L3
   /** Input device. */
   private java.io.Reader zzReader;
 
@@ -67,9 +67,9 @@
    */
   private int zzFinalHighSurrogate = 0;
 
---- user class code
+--- user class code L4
 
---- constructor declaration
+--- constructor declaration L5
 
   /**
    * Refills the input buffer.
@@ -275,7 +275,7 @@
    *
    * @param errorCode the code of the error message to display.
    */
---- zzScanError declaration
+--- zzScanError declaration L6
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];
@@ -283,7 +283,7 @@
       message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
 
---- throws clause
+--- throws clause L7
   }
 
 
@@ -295,7 +295,7 @@
    * @param number the number of characters to be read again. This number must not be greater than
    *     {@link #yylength()}.
    */
---- yypushback decl (contains zzScanError exception)
+--- yypushback decl (contains zzScanError exception) L8
     if ( number > yylength() )
       zzScanError(ZZ_PUSHBACK_2BIG);
 
@@ -303,7 +303,7 @@
   }
 
 
---- zzDoEOF
+--- zzDoEOF L9
 
 
   /**
@@ -313,7 +313,7 @@
    * @return the next token.
    * @exception java.io.IOException if any I/O-Error occurs.
    */
---- yylex declaration
+--- yylex declaration L10
     int zzInput;
     int zzAction;
 
@@ -323,25 +323,25 @@
     int zzEndReadL = zzEndRead;
     char[] zzBufferL = zzBuffer;
 
---- local declarations
+--- local declarations L11
 
     while (true) {
       zzMarkedPosL = zzMarkedPos;
 
---- start admin (line, char, col count)
+--- start admin (line, char, col count) L12
       zzAction = -1;
 
       zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
 
---- start admin (lexstate etc)
+--- start admin (lexstate etc) L13
 
       zzForAction: {
         while (true) {
 
---- next input, line, col, char count, next transition, isFinal action
+--- next input, line, col, char count, next transition, isFinal action L14
             zzAction = zzState;
             zzMarkedPosL = zzCurrentPosL;
---- line count update
+--- line count update L15
           }
 
         }
@@ -349,21 +349,21 @@
 
       // store back cached position
       zzMarkedPos = zzMarkedPosL;
---- char count update
+--- char count update L16
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
---- eofvalue
+--- eofvalue L17
       }
       else {
---- actions
+--- actions L18
           default:
---- no match
+--- no match L19
         }
       }
     }
   }
 
---- main
+--- main L20
 
 }

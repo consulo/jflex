@@ -33,7 +33,7 @@ DIGIT = [0-9]
 %%
 
 <YYINITIAL> {
-  "name: " [^\r\n]*   { test.setTestName(yytext().substring(6).trim()); }
+  "name: " [^\r\n]*   { test.setTestName(yytext().toString().substring(6).trim()); }
 
   "description:"      { yybegin(DESCR); }
 
@@ -51,12 +51,12 @@ DIGIT = [0-9]
   "javac-fail:" " "+ "true"  { test.setExpectJavacFail(true); }
   "javac-fail:" " "+ "false" { test.setExpectJavacFail(false); }
 
-  "javac-encoding:" [^\r\n]* { test.setJavacEncoding(yytext().substring(15).trim()); }
+  "javac-encoding:" [^\r\n]* { test.setJavacEncoding(yytext().toString().substring(15).trim()); }
 
-  "input-file-encoding:" [^\r\n]* { test.setInputFileEncoding(yytext().substring(20).trim()); }
-  "output-file-encoding:" [^\r\n]* { test.setOutputFileEncoding(yytext().substring(21).trim()); }
+  "input-file-encoding:" [^\r\n]* { test.setInputFileEncoding(yytext().toString().substring(20).trim()); }
+  "output-file-encoding:" [^\r\n]* { test.setOutputFileEncoding(yytext().toString().substring(21).trim()); }
 
-  "common-input-file:"  [^\r\n]* { test.setCommonInputFile(yytext().substring(18).trim()); }
+  "common-input-file:"  [^\r\n]* { test.setCommonInputFile(yytext().toString().substring(18).trim()); }
 
   "jdk:" " "*         { yybegin(VERSION); }
 
@@ -66,7 +66,7 @@ DIGIT = [0-9]
 
 
 <VERSION> {
-  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext()); yybegin(YYINITIAL); }
+  {DIGIT}+ ("." {DIGIT}+)* { test.setJavaVersion(yytext().toString()); yybegin(YYINITIAL); }
 }
 
 <DESCR> {
@@ -77,8 +77,8 @@ DIGIT = [0-9]
 
 
 <JFLEXCMD, JAVAC_FILES> {
-  [^ \t\r\n]+         { cmdLine.add(yytext()); }
-  \" ~\"              { cmdLine.add(yytext().substring(1,yylength()-1));
+  [^ \t\r\n]+         { cmdLine.add(yytext().toString()); }
+  \" ~\"              { cmdLine.add(yytext().toString().substring(1,yylength()-1));
                         /* quoted cmdline options */ }
   [ \t]+              { /* ignore whitespace */ }
   \\[ \t]+{NL}        { /* allow line continuation with \ */ }
@@ -91,7 +91,7 @@ DIGIT = [0-9]
   {NL}                { test.setJavacFiles(cmdLine); yybegin(YYINITIAL); }
 
 <LINELIST> {
-  [0-9]+              { lineList.add(Integer.valueOf(yytext())); }
+  [0-9]+              { lineList.add(Integer.valueOf(yytext().toString())); }
   [ \t]+              { }
   {NL}                { yybegin(YYINITIAL); }
 }
@@ -99,3 +99,4 @@ DIGIT = [0-9]
 <<EOF>>               { return test; }
 
 [^]   { throw new LoadException("Illegal character: ["+yytext()+"]"); }
+

@@ -33,14 +33,14 @@ my $sheet =<<'__STYLESHEET__';
   <xsl:param name="release"/>
 
   <!-- Replace all JFlex versions with the new JFlex release version, -->
-  <!-- except for the bootstrap version in the de.jflex:jflex POM.    -->
+  <!-- except for the bootstrap version in the org.jetbrains.intellij.deps.jflex:jflex POM.    -->
   <xsl:template
-      match=" /pom:project[(pom:groupId='de.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='de.jflex'))
+      match=" /pom:project[(pom:groupId='org.jetbrains.intellij.deps.jflex' or (not(pom:groupId) and pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex'))
                            and not (pom:artifactId='cup-maven-plugin')]/pom:version
-             |/pom:project/pom:parent[pom:groupId='de.jflex' and pom:artifactId='jflex-parent']/pom:version
+             |/pom:project/pom:parent[pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-parent']/pom:version
              |/pom:project/pom:build/pom:plugins/pom:plugin
-              [   (pom:groupId='de.jflex' and pom:artifactId='jflex-maven-plugin')
-              and not(/pom:project/pom:parent/pom:groupId='de.jflex' and /pom:project/pom:artifactId='jflex')]/pom:version
+              [   (pom:groupId='org.jetbrains.intellij.deps.jflex' and pom:artifactId='jflex-maven-plugin')
+              and not(/pom:project/pom:parent/pom:groupId='org.jetbrains.intellij.deps.jflex' and /pom:project/pom:artifactId='jflex')]/pom:version
             ">
     <version><xsl:value-of select="$release"/></version>
   </xsl:template>
@@ -55,7 +55,7 @@ __STYLESHEET__
 
 my $snapshot = get_snapshot_version();
 (my $release = $snapshot) =~ s/-SNAPSHOT//;
-my $branch = "branch-$release";
+my $branch = "intellij/$release";
 
 select STDOUT;
 $| = 1; # Turn on auto-flush

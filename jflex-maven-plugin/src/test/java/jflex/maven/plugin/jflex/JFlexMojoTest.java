@@ -67,8 +67,8 @@ public class JFlexMojoTest {
      * terminator. For this reason, the generated output will be longer on a
      * Windows platform ("\r\n") than on a Unix platform ("\n").
      */
-    boolean correctSize = (size > 26624) && (size < 36696);
-    assertWithMessage("size of produced file between 26k and 36k. Actual is " + size)
+    boolean correctSize = (size > 26624) && (size <= 41014);
+    assertWithMessage("size of produced file between 26k and 41k. Actual is " + size)
         .that(correctSize)
         .isTrue();
   }

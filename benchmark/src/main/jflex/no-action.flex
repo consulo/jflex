@@ -35,3 +35,4 @@ LONG  = "b"+
 [^]      { /* nothing */ }
 
 <<EOF>>  { return matches; }
+
