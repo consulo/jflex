@@ -5,13 +5,6 @@
 
 package jflex.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import java.util.Set;
 import java_cup.runtime.Symbol;
 import jflex.core.unicode.CharClasses;
 import jflex.core.unicode.ILexScan;
@@ -21,8 +14,11 @@ import jflex.l10n.ErrorMessages;
 import jflex.logging.Out;
 import jflex.scanner.LexicalStates;
 import jflex.scanner.ScannerException;
-import kotlinx.io.*;
-import kotlinx.io.files.Path;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * A variant of{@link AbstractLexScan} that is used when generating Kotlin lexers. The only
@@ -248,7 +244,7 @@ public abstract class KotlinAbstractLexScan implements ILexScan {
       throw new ScannerException(file, ErrorMessages.FILE_CYCLE, lexLine());
     }
     try {
-      lexPushStream(new Path(f));
+      lexPushStream(f.toPath());
       files.push(file);
       file = f;
       Out.println("Including \"" + file + "\"");

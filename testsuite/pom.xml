@@ -8,7 +8,7 @@
   <parent>
     <groupId>consulo.internal</groupId>
     <artifactId>jflex-parent</artifactId>
-    <version>1.10.0</version>
+    <version>1.10.14</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>jflex-testsuite-parent</artifactId>

@@ -5,11 +5,12 @@
 
 package jflex.option;
 
+import jflex.l10n.ErrorMessages;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
-import jflex.l10n.ErrorMessages;
 
 /**
  * Collects all global JFlex options.
@@ -66,6 +67,7 @@ public class Options {
 
   /** The encoding to use for input and output files. */
   public static Charset encoding;
+
   /** The language the emitted scanner is written in */
   public static OutputMode output_mode;
 
